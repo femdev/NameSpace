@@ -1,0 +1,492 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		F2000000000000000000000A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1000000000000000000000A /* AppDelegate.swift */; };
+		F2000000000000000000000B /* CGSPrivate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1000000000000000000000B /* CGSPrivate.swift */; };
+		F2000000000000000000000C /* SpaceCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1000000000000000000000C /* SpaceCatalog.swift */; };
+		F2000000000000000000000D /* SpaceStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1000000000000000000000D /* SpaceStore.swift */; };
+		F2000000000000000000000E /* SpaceSwitcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1000000000000000000000E /* SpaceSwitcher.swift */; };
+		F2000000000000000000000F /* MissionControlObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1000000000000000000000F /* MissionControlObserver.swift */; };
+		F20000000000000000000010 /* OverlayWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000010 /* OverlayWindowController.swift */; };
+		F20000000000000000000011 /* OverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000011 /* OverlayView.swift */; };
+		F20000000000000000000012 /* StatusBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000012 /* StatusBarController.swift */; };
+		F20000000000000000000013 /* RenamePopover.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000013 /* RenamePopover.swift */; };
+		F20000000000000000000015 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000015 /* Assets.xcassets */; };
+		F20000000000000000000020 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000020 /* main.swift */; };
+		F20000000000000000000021 /* AccessibilityCheck.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000021 /* AccessibilityCheck.swift */; };
+		F20000000000000000000022 /* SpaceHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000022 /* SpaceHistory.swift */; };
+		F20000000000000000000023 /* GlobalHotKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000023 /* GlobalHotKey.swift */; };
+		F20000000000000000000024 /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000024 /* AboutView.swift */; };
+		F20000000000000000000025 /* AboutWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000025 /* AboutWindowController.swift */; };
+		AA00000000000000000000D4 /* SpaceHistoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000C4 /* SpaceHistoryTests.swift */; };
+		AA00000000000000000000D1 /* SpaceStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000C1 /* SpaceStoreTests.swift */; };
+		AA00000000000000000000D2 /* SpaceCatalogTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000C2 /* SpaceCatalogTests.swift */; };
+		AA00000000000000000000D3 /* SpaceSwitcherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000C3 /* SpaceSwitcherTests.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		11111111111111111111111F /* Namespace.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Namespace.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		F1000000000000000000000A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		F1000000000000000000000B /* CGSPrivate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CGSPrivate.swift; sourceTree = "<group>"; };
+		F1000000000000000000000C /* SpaceCatalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpaceCatalog.swift; sourceTree = "<group>"; };
+		F1000000000000000000000D /* SpaceStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpaceStore.swift; sourceTree = "<group>"; };
+		F1000000000000000000000E /* SpaceSwitcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpaceSwitcher.swift; sourceTree = "<group>"; };
+		F1000000000000000000000F /* MissionControlObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MissionControlObserver.swift; sourceTree = "<group>"; };
+		F10000000000000000000010 /* OverlayWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayWindowController.swift; sourceTree = "<group>"; };
+		F10000000000000000000011 /* OverlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayView.swift; sourceTree = "<group>"; };
+		F10000000000000000000012 /* StatusBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusBarController.swift; sourceTree = "<group>"; };
+		F10000000000000000000013 /* RenamePopover.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenamePopover.swift; sourceTree = "<group>"; };
+		F10000000000000000000014 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F10000000000000000000015 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		F10000000000000000000020 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		F10000000000000000000021 /* AccessibilityCheck.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityCheck.swift; sourceTree = "<group>"; };
+		F10000000000000000000022 /* SpaceHistory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpaceHistory.swift; sourceTree = "<group>"; };
+		F10000000000000000000023 /* GlobalHotKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobalHotKey.swift; sourceTree = "<group>"; };
+		F10000000000000000000024 /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
+		F10000000000000000000025 /* AboutWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutWindowController.swift; sourceTree = "<group>"; };
+		AA00000000000000000000C4 /* SpaceHistoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpaceHistoryTests.swift; sourceTree = "<group>"; };
+		AA00000000000000000000A2 /* NamespaceTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NamespaceTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		AA00000000000000000000C1 /* SpaceStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpaceStoreTests.swift; sourceTree = "<group>"; };
+		AA00000000000000000000C2 /* SpaceCatalogTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpaceCatalogTests.swift; sourceTree = "<group>"; };
+		AA00000000000000000000C3 /* SpaceSwitcherTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpaceSwitcherTests.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXContainerItemProxy section */
+		AA00000000000000000000B0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 11111111111111111111111A /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 11111111111111111111111E;
+			remoteInfo = Namespace;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		222222222222222222222227 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AA00000000000000000000A5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		11111111111111111111111B = {
+			isa = PBXGroup;
+			children = (
+				11111111111111111111111D /* Namespace */,
+				AA00000000000000000000A3 /* NamespaceTests */,
+				11111111111111111111111C /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		11111111111111111111111C /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				11111111111111111111111F /* Namespace.app */,
+				AA00000000000000000000A2 /* NamespaceTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		AA00000000000000000000A3 /* NamespaceTests */ = {
+			isa = PBXGroup;
+			children = (
+				AA00000000000000000000C1 /* SpaceStoreTests.swift */,
+				AA00000000000000000000C2 /* SpaceCatalogTests.swift */,
+				AA00000000000000000000C3 /* SpaceSwitcherTests.swift */,
+				AA00000000000000000000C4 /* SpaceHistoryTests.swift */,
+			);
+			path = NamespaceTests;
+			sourceTree = "<group>";
+		};
+		11111111111111111111111D /* Namespace */ = {
+			isa = PBXGroup;
+			children = (
+				F10000000000000000000020 /* main.swift */,
+				F1000000000000000000000A /* AppDelegate.swift */,
+				F1000000000000000000000B /* CGSPrivate.swift */,
+				F1000000000000000000000C /* SpaceCatalog.swift */,
+				F1000000000000000000000D /* SpaceStore.swift */,
+				F1000000000000000000000E /* SpaceSwitcher.swift */,
+				F1000000000000000000000F /* MissionControlObserver.swift */,
+				F10000000000000000000010 /* OverlayWindowController.swift */,
+				F10000000000000000000011 /* OverlayView.swift */,
+				F10000000000000000000012 /* StatusBarController.swift */,
+				F10000000000000000000013 /* RenamePopover.swift */,
+				F10000000000000000000021 /* AccessibilityCheck.swift */,
+				F10000000000000000000022 /* SpaceHistory.swift */,
+				F10000000000000000000023 /* GlobalHotKey.swift */,
+				F10000000000000000000024 /* AboutView.swift */,
+				F10000000000000000000025 /* AboutWindowController.swift */,
+				F10000000000000000000015 /* Assets.xcassets */,
+				F10000000000000000000014 /* Info.plist */,
+			);
+			path = Namespace;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		11111111111111111111111E /* Namespace */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 222222222222222222222221 /* Build configuration list for PBXNativeTarget "Namespace" */;
+			buildPhases = (
+				222222222222222222222226 /* Sources */,
+				222222222222222222222227 /* Frameworks */,
+				222222222222222222222228 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Namespace;
+			productName = Namespace;
+			productReference = 11111111111111111111111F /* Namespace.app */;
+			productType = "com.apple.product-type.application";
+		};
+		AA00000000000000000000A1 /* NamespaceTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AA00000000000000000000A6 /* Build configuration list for PBXNativeTarget "NamespaceTests" */;
+			buildPhases = (
+				AA00000000000000000000A4 /* Sources */,
+				AA00000000000000000000A5 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				AA00000000000000000000A9 /* PBXTargetDependency */,
+			);
+			name = NamespaceTests;
+			productName = NamespaceTests;
+			productReference = AA00000000000000000000A2 /* NamespaceTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		11111111111111111111111A /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1500;
+				LastUpgradeCheck = 2650;
+				TargetAttributes = {
+					11111111111111111111111E = {
+						CreatedOnToolsVersion = 15.0;
+					};
+					AA00000000000000000000A1 = {
+						CreatedOnToolsVersion = 15.0;
+						TestTargetID = 11111111111111111111111E;
+					};
+				};
+			};
+			buildConfigurationList = 222222222222222222222220 /* Build configuration list for PBXProject "Namespace" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 11111111111111111111111B;
+			productRefGroup = 11111111111111111111111C /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				11111111111111111111111E /* Namespace */,
+				AA00000000000000000000A1 /* NamespaceTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		222222222222222222222228 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F20000000000000000000015 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		222222222222222222222226 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F20000000000000000000020 /* main.swift in Sources */,
+				F2000000000000000000000A /* AppDelegate.swift in Sources */,
+				F2000000000000000000000B /* CGSPrivate.swift in Sources */,
+				F2000000000000000000000C /* SpaceCatalog.swift in Sources */,
+				F2000000000000000000000D /* SpaceStore.swift in Sources */,
+				F2000000000000000000000E /* SpaceSwitcher.swift in Sources */,
+				F2000000000000000000000F /* MissionControlObserver.swift in Sources */,
+				F20000000000000000000010 /* OverlayWindowController.swift in Sources */,
+				F20000000000000000000011 /* OverlayView.swift in Sources */,
+				F20000000000000000000012 /* StatusBarController.swift in Sources */,
+				F20000000000000000000013 /* RenamePopover.swift in Sources */,
+				F20000000000000000000021 /* AccessibilityCheck.swift in Sources */,
+				F20000000000000000000022 /* SpaceHistory.swift in Sources */,
+				F20000000000000000000023 /* GlobalHotKey.swift in Sources */,
+				F20000000000000000000024 /* AboutView.swift in Sources */,
+				F20000000000000000000025 /* AboutWindowController.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AA00000000000000000000A4 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AA00000000000000000000D1 /* SpaceStoreTests.swift in Sources */,
+				AA00000000000000000000D2 /* SpaceCatalogTests.swift in Sources */,
+				AA00000000000000000000D3 /* SpaceSwitcherTests.swift in Sources */,
+				AA00000000000000000000D4 /* SpaceHistoryTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		AA00000000000000000000A9 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 11111111111111111111111E /* Namespace */;
+			targetProxy = AA00000000000000000000B0 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		222222222222222222222222 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		222222222222222222222223 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+			};
+			name = Release;
+		};
+		222222222222222222222224 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				ENABLE_HARDENED_RUNTIME = NO;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Namespace/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 0.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.namespaceapp.Namespace;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		222222222222222222222225 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				ENABLE_HARDENED_RUNTIME = NO;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Namespace/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 0.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.namespaceapp.Namespace;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		AA00000000000000000000A7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MARKETING_VERSION = 0.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.namespaceapp.NamespaceTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Namespace.app/Contents/MacOS/Namespace";
+			};
+			name = Debug;
+		};
+		AA00000000000000000000A8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MARKETING_VERSION = 0.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.namespaceapp.NamespaceTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Namespace.app/Contents/MacOS/Namespace";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		222222222222222222222220 /* Build configuration list for PBXProject "Namespace" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				222222222222222222222222 /* Debug */,
+				222222222222222222222223 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		222222222222222222222221 /* Build configuration list for PBXNativeTarget "Namespace" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				222222222222222222222224 /* Debug */,
+				222222222222222222222225 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		AA00000000000000000000A6 /* Build configuration list for PBXNativeTarget "NamespaceTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AA00000000000000000000A7 /* Debug */,
+				AA00000000000000000000A8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 11111111111111111111111A /* Project object */;
+}
