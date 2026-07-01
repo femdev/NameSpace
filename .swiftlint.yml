@@ -1,0 +1,64 @@
+# SwiftLint configuration for Namespace.
+#
+# Advisory, not build-breaking: this config is NOT wired into the Xcode build as a
+# run-script phase, so a missing SwiftLint never fails a build. Run it yourself with
+# `swiftlint` (install via `brew install swiftlint`) from the repo root, or add it as an
+# opt-in Xcode build phase if you want inline warnings. CI runs it in lint-only mode.
+#
+# Rule choices are tuned to the existing style so the baseline is clean.
+
+included:
+  - Namespace
+  - NamespaceTests
+
+excluded:
+  - .build
+  - DerivedData
+  - Namespace.xcodeproj
+
+# A few high-signal opt-in rules worth having on a small, hand-maintained codebase.
+opt_in_rules:
+  - empty_count
+  - closure_spacing
+  - explicit_init
+  - first_where
+  - redundant_nil_coalescing
+  - toggle_bool
+  - unneeded_parentheses_in_closure_argument
+
+# Rules intentionally relaxed for this project's idioms:
+disabled_rules:
+  - todo                       # we use TODO/FIXME markers deliberately during dev
+
+line_length:
+  warning: 120
+  error: 250                   # prose in user-facing string literals can run long
+  ignores_comments: true       # several explanatory comments are intentionally long
+  ignores_urls: true
+  ignores_interpolated_strings: true   # verbose diagLog() debug lines
+
+identifier_name:
+  # Short, meaningful names are idiomatic here (cid, fd, win, dnc, id64, n, v).
+  min_length: 2
+  allowed_symbols: ["_"]
+  excluded:
+    - id
+    - fd
+    - n
+    - v
+
+type_name:
+  min_length: 3
+
+# Keep function/type body limits generous; rebuildMenu and switchTo are legitimately long.
+function_body_length:
+  warning: 100
+  error: 160
+
+type_body_length:
+  warning: 300
+  error: 450
+
+file_length:
+  warning: 400
+  error: 600

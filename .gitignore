@@ -1,0 +1,28 @@
+# macOS
+.DS_Store
+
+# Xcode — user-specific state (never share)
+xcuserdata/
+*.xcuserstate
+*.xcuserdatad/
+
+# Xcode — build products & derived data
+build/
+DerivedData/
+*.moved-aside
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# Swift Package Manager (not used here, but harmless to ignore)
+.build/
+.swiftpm/
+
+# Signing / local secrets
+*.p12
+*.mobileprovision
+
+# Editor cruft
+*.swp
+*~

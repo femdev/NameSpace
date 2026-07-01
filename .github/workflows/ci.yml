@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-test:
+    name: Build & Test
+    runs-on: macos-15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Show Xcode version
+        run: xcodebuild -version
+
+      # Ad-hoc ("Sign to Run Locally") signing is enough: Namespace ships no
+      # entitlements that need a provisioning profile, and the unit tests inject
+      # into the locally-signed host app.
+      - name: Build
+        run: |
+          xcodebuild build \
+            -scheme Namespace \
+            -destination 'platform=macOS' \
+            -configuration Debug
+
+      - name: Test
+        run: |
+          xcodebuild test \
+            -scheme Namespace \
+            -destination 'platform=macOS'
