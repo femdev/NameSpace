@@ -47,6 +47,8 @@ func diagLog(_ msg: String) {
 final class AppDelegate: NSObject, NSApplicationDelegate {
     private let store = SpaceStore()
     private let history = SpaceHistory()
+    private let permissions = PermissionsMonitor()
+    private lazy var permissionsWindow = PermissionsWindowController(monitor: permissions)
     private var statusBar: StatusBarController!
     private var overlay: OverlayWindowController!
     private var mcObserver: MissionControlObserver!
@@ -63,8 +65,21 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         NSApp.setActivationPolicy(.accessory)
         diagLog("activation policy set to accessory")
 
-        statusBar = StatusBarController(store: store, history: history)
+        statusBar = StatusBarController(
+            store: store,
+            history: history,
+            permissions: permissions,
+            openPermissions: { [weak self] in self?.permissionsWindow.show() }
+        )
         diagLog("StatusBarController created")
+
+        // Surface the permissions onboarding window on launch if anything's missing, and
+        // start the live monitor either way so the menu reflects the current state.
+        permissions.startPolling()
+        if permissions.summary.needsAttention {
+            diagLog("permissions need attention — showing onboarding window")
+            permissionsWindow.show()
+        }
 
         overlay = OverlayWindowController(store: store, history: history)
         mcObserver = MissionControlObserver()

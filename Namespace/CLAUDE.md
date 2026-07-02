@@ -16,6 +16,9 @@ Read the root `CLAUDE.md` first for product context and the private-API caveat.
 | `SpaceHistory.swift` | Tracks the immediately-previous Space (by id64) so "Back" can toggle. Suppresses the fly-over Spaces our own switches walk through. Pure/testable. |
 | `GlobalHotKey.swift` | A single system-wide Carbon hotkey (`RegisterEventHotKey`). Drives the ⌃⌥← "Back" shortcut. |
 | `AccessibilityCheck.swift` | Wraps `AXIsProcessTrustedWithOptions`; shows the "grant Accessibility" alert. |
+| `Permissions.swift` | `PermissionsMonitor` (ObservableObject): live status of Accessibility + Automation, polling that stops once all granted, request helpers. The AE-status→state mapping + summary are pure/testable. |
+| `PermissionsView.swift` | SwiftUI onboarding panel: per-permission live status badge + Grant button. |
+| `PermissionsWindowController.swift` | Hosts `PermissionsView`; shown on launch when a permission is missing; auto-dismisses once all granted. |
 | `MissionControlObserver.swift` | Listens on `DistributedNotificationCenter` for Mission Control activate/deactivate and fires callbacks. |
 | `OverlayWindowController.swift` | Builds the transparent, screenSaver-level, all-Spaces window that hosts the labels. |
 | `OverlayView.swift` | SwiftUI. Positions name labels under each Space thumbnail using the empirically-tuned Spaces-bar geometry constants. |
@@ -48,6 +51,14 @@ history; the fly-over Spaces our own walks pass through are suppressed (announce
 `MissionControlObserver` (DistributedNotificationCenter) → `onActivate`/`onDeactivate`
 → `OverlayWindowController.show()/hide()` → renders `OverlayView` with the current
 Spaces + names.
+
+**Permissions**
+`AppDelegate` owns a `PermissionsMonitor`. On launch it polls Accessibility +
+Automation; if either is missing, `PermissionsWindowController` shows the onboarding
+window (which keeps polling and auto-dismisses once all granted). `StatusBarController`
+subscribes via `onChange` to show a "permissions needed" banner in the menu until
+everything is granted. Grants persist across rebuilds only when the app is signed with a
+stable identity — see the signing note in the root `CLAUDE.md` / README.
 
 ## Conventions
 
