@@ -96,35 +96,52 @@ final class PermissionsMonitor: ObservableObject {
     }
 
     static func automationState() -> PermissionState {
-        automationState(fromStatus: queryAutomation(askUserIfNeeded: false))
+        automationState(fromStatus: queryAutomationStatus())
     }
 
     // MARK: - Requests (may prompt)
 
-    /// Ask macOS for Accessibility: triggers the system "Open System Settings" prompt and
-    /// opens the Accessibility pane so the user can toggle Namespace on.
+    /// Ask macOS for Accessibility by opening the Accessibility pane so the user can toggle
+    /// Namespace on. The non-prompting check both reports status and ensures the app is
+    /// listed in that pane. We deliberately do NOT also fire the system "Open System
+    /// Settings" prompt: doing both popped a dialog AND opened Settings at once, which was
+    /// confusing.
     static func requestAccessibility() {
-        _ = AccessibilityCheck.isTrusted(prompt: true)
+        _ = AccessibilityCheck.isTrusted(prompt: false)
         open(pane: "Privacy_Accessibility")
     }
 
-    /// Ask macOS for Automation. The first call shows the one-time consent dialog (which is
-    /// also what registers Namespace in the Automation list); afterwards we open the pane so
-    /// a previously-denied grant can be toggled back on.
-    static func requestAutomation(completion: @escaping () -> Void) {
-        DispatchQueue.global(qos: .userInitiated).async {
-            _ = queryAutomation(askUserIfNeeded: true)
-            DispatchQueue.main.async {
+    /// Ask macOS for Automation. Sending a real (harmless) Apple Event to System Events is
+    /// what actually fires the one-time "control System Events" consent dialog AND registers
+    /// Namespace in the Automation list — `AEDeterminePermissionToAutomateTarget` alone does
+    /// not reliably prompt. This must run on the **main thread** (Apple Events and the TCC
+    /// prompt misbehave off-main; the earlier background version quietly opened an empty
+    /// pane and never prompted). If access was already denied, macOS won't prompt again, so
+    /// we send the user to the Automation pane instead.
+    static func requestAutomation(completion: @escaping () -> Void = {}) {
+        let work = {
+            if automationState() == .denied {
                 open(pane: "Privacy_Automation")
-                completion()
+            } else {
+                // Not-yet-determined (or granted): actually SENDING a command to System
+                // Events is what fires the consent prompt. It must be a real command the
+                // app has to handle — `count processes` is harmless and read-only.
+                // (A statement like `return true` is evaluated locally by AppleScript and
+                // never reaches System Events, so it never prompts.)
+                var err: NSDictionary?
+                NSAppleScript(source: "tell application \"System Events\" to count processes")?
+                    .executeAndReturnError(&err)
             }
+            completion()
         }
+        if Thread.isMainThread { work() } else { DispatchQueue.main.async(execute: work) }
     }
 
     // MARK: - Helpers
 
-    /// Determine (optionally requesting) permission to send Apple Events to System Events.
-    private static func queryAutomation(askUserIfNeeded: Bool) -> OSStatus {
+    /// Non-prompting determination of permission to send Apple Events to System Events.
+    /// (Requesting is done by actually sending an event in `requestAutomation`.)
+    private static func queryAutomationStatus() -> OSStatus {
         let bundleID = "com.apple.systemevents"
         var target = AEDesc()
         let bytes = Array(bundleID.utf8)
@@ -133,7 +150,7 @@ final class PermissionsMonitor: ObservableObject {
         }
         guard createStatus == noErr else { return createStatus }
         defer { AEDisposeDesc(&target) }
-        return AEDeterminePermissionToAutomateTarget(&target, typeWildCard, typeWildCard, askUserIfNeeded)
+        return AEDeterminePermissionToAutomateTarget(&target, typeWildCard, typeWildCard, false)
     }
 
     private static func open(pane: String) {
