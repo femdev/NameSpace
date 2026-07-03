@@ -74,20 +74,28 @@ The first time Namespace tries to switch a space, macOS prompts:
 
 Click **Allow**. (You can revisit this later in System Settings → Privacy & Security → Automation.)
 
-### When you rebuild from Xcode
+> **The app guides you through all three.** On launch, if any permission is missing,
+> Namespace opens a **Permissions** window with a live status badge and a one-click
+> **Grant** button for each. It updates on its own the moment you grant one — no relaunch.
+> You can reopen it any time from the menu-bar icon.
 
-Every Xcode rebuild changes the binary signature, which macOS sometimes treats as a different app — silently invalidating Accessibility / Automation grants. If switching suddenly stops working after a rebuild:
+### Make permissions stick across rebuilds (recommended, one-time)
+
+By default the app is signed **ad-hoc** ("Sign to Run Locally"), so every Xcode rebuild
+changes its code signature and macOS silently invalidates your Accessibility / Automation
+grants — meaning you'd have to re-grant after every build.
+
+Fix it once by signing with a **stable self-signed identity**:
 
 ```bash
-# Reset all TCC entries for our bundle id, then re-grant when prompted:
-tccutil reset Accessibility com.namespaceapp.Namespace
-tccutil reset AppleEvents com.namespaceapp.Namespace
-tccutil reset PostEvent com.namespaceapp.Namespace
-pkill -f Namespace.app
-# Then ⌘R in Xcode and click Allow on the prompts.
+./setup-signing.sh      # creates a self-signed cert + wires it into the build (git-ignored)
+./reset-permissions.sh  # one final TCC reset so macOS re-issues grants against the new signature
+# Then ⌘R in Xcode and grant both permissions. After this, grants persist across rebuilds.
 ```
 
-This step goes away if/when you code-sign with a stable identity.
+`setup-signing.sh` writes a git-ignored `Signing.local.xcconfig` that the project picks up
+via an optional `#include?`. Contributors and CI who skip this build ad-hoc exactly as
+before. If you ever need to force a fresh re-grant, `./reset-permissions.sh` still does it.
 
 ## Using it
 
@@ -112,15 +120,20 @@ This step goes away if/when you code-sign with a stable identity.
 
 ```
 Namespace.xcodeproj/        # hand-written Xcode project
+Namespace.xcconfig            # base build config; optional #include of Signing.local.xcconfig
 Namespace/
   main.swift                    # entry point: creates NSApplication, runs the loop
-  AppDelegate.swift             # wires status item, overlay, MC observer; owns SpaceHistory
+  AppDelegate.swift             # composition root; owns store/history/permissions
   CGSPrivate.swift              # private API declarations (@_silgen_name + dlopen)
   SpaceCatalog.swift            # enumerate Spaces, current Space ID/UUID
   SpaceStore.swift              # UserDefaults persistence (UUID → name)
   SpaceSwitcher.swift           # Ctrl+N direct jump, falls back to Ctrl+Arrow walking
   SpaceHistory.swift            # tracks the previous Space for the "Back" toggle
   GlobalHotKey.swift            # Carbon system-wide hotkey (⌃⌥← for Back)
+  AccessibilityCheck.swift      # Accessibility permission helper
+  Permissions.swift             # live Accessibility + Automation monitor (polling)
+  PermissionsView.swift         # SwiftUI onboarding panel with live status
+  PermissionsWindowController.swift # hosts the permissions window
   MissionControlObserver.swift  # detects MC activate / deactivate
   OverlayWindowController.swift # transparent screenSaver-level window
   OverlayView.swift             # SwiftUI labels positioned under thumbnails
@@ -129,12 +142,14 @@ Namespace/
   AboutView.swift               # SwiftUI content for the custom About/Help panel
   AboutWindowController.swift   # hosts AboutView in a titled window
   Info.plist                    # LSUIElement=YES, NSAppleEventsUsageDescription
-  Assets.xcassets/              # empty app icon slot
+  Assets.xcassets/              # app icon
 NamespaceTests/               # XCTest unit tests for the pure-logic layer
   SpaceStoreTests.swift
   SpaceCatalogTests.swift
   SpaceSwitcherTests.swift
   SpaceHistoryTests.swift
+  PermissionsTests.swift
+docs/                         # PRDs and design notes
 ```
 
 ## Running the tests

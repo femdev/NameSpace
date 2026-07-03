@@ -24,6 +24,10 @@
 		F20000000000000000000023 /* GlobalHotKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000023 /* GlobalHotKey.swift */; };
 		F20000000000000000000024 /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000024 /* AboutView.swift */; };
 		F20000000000000000000025 /* AboutWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000025 /* AboutWindowController.swift */; };
+		F20000000000000000000031 /* Permissions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000031 /* Permissions.swift */; };
+		F20000000000000000000032 /* PermissionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000032 /* PermissionsView.swift */; };
+		F20000000000000000000033 /* PermissionsWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000033 /* PermissionsWindowController.swift */; };
+		AA00000000000000000000D5 /* PermissionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000C5 /* PermissionsTests.swift */; };
 		AA00000000000000000000D4 /* SpaceHistoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000C4 /* SpaceHistoryTests.swift */; };
 		AA00000000000000000000D1 /* SpaceStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000C1 /* SpaceStoreTests.swift */; };
 		AA00000000000000000000D2 /* SpaceCatalogTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000C2 /* SpaceCatalogTests.swift */; };
@@ -50,11 +54,16 @@
 		F10000000000000000000023 /* GlobalHotKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobalHotKey.swift; sourceTree = "<group>"; };
 		F10000000000000000000024 /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
 		F10000000000000000000025 /* AboutWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutWindowController.swift; sourceTree = "<group>"; };
+		F10000000000000000000031 /* Permissions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Permissions.swift; sourceTree = "<group>"; };
+		F10000000000000000000032 /* PermissionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionsView.swift; sourceTree = "<group>"; };
+		F10000000000000000000033 /* PermissionsWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionsWindowController.swift; sourceTree = "<group>"; };
+		AA00000000000000000000C5 /* PermissionsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionsTests.swift; sourceTree = "<group>"; };
 		AA00000000000000000000C4 /* SpaceHistoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpaceHistoryTests.swift; sourceTree = "<group>"; };
 		AA00000000000000000000A2 /* NamespaceTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NamespaceTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA00000000000000000000C1 /* SpaceStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpaceStoreTests.swift; sourceTree = "<group>"; };
 		AA00000000000000000000C2 /* SpaceCatalogTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpaceCatalogTests.swift; sourceTree = "<group>"; };
 		AA00000000000000000000C3 /* SpaceSwitcherTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpaceSwitcherTests.swift; sourceTree = "<group>"; };
+		F10000000000000000000030 /* Namespace.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Namespace.xcconfig; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXContainerItemProxy section */
@@ -88,6 +97,7 @@
 		11111111111111111111111B = {
 			isa = PBXGroup;
 			children = (
+				F10000000000000000000030 /* Namespace.xcconfig */,
 				11111111111111111111111D /* Namespace */,
 				AA00000000000000000000A3 /* NamespaceTests */,
 				11111111111111111111111C /* Products */,
@@ -110,6 +120,7 @@
 				AA00000000000000000000C2 /* SpaceCatalogTests.swift */,
 				AA00000000000000000000C3 /* SpaceSwitcherTests.swift */,
 				AA00000000000000000000C4 /* SpaceHistoryTests.swift */,
+				AA00000000000000000000C5 /* PermissionsTests.swift */,
 			);
 			path = NamespaceTests;
 			sourceTree = "<group>";
@@ -133,6 +144,9 @@
 				F10000000000000000000023 /* GlobalHotKey.swift */,
 				F10000000000000000000024 /* AboutView.swift */,
 				F10000000000000000000025 /* AboutWindowController.swift */,
+				F10000000000000000000031 /* Permissions.swift */,
+				F10000000000000000000032 /* PermissionsView.swift */,
+				F10000000000000000000033 /* PermissionsWindowController.swift */,
 				F10000000000000000000015 /* Assets.xcassets */,
 				F10000000000000000000014 /* Info.plist */,
 			);
@@ -246,6 +260,9 @@
 				F20000000000000000000023 /* GlobalHotKey.swift in Sources */,
 				F20000000000000000000024 /* AboutView.swift in Sources */,
 				F20000000000000000000025 /* AboutWindowController.swift in Sources */,
+				F20000000000000000000031 /* Permissions.swift in Sources */,
+				F20000000000000000000032 /* PermissionsView.swift in Sources */,
+				F20000000000000000000033 /* PermissionsWindowController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -257,6 +274,7 @@
 				AA00000000000000000000D2 /* SpaceCatalogTests.swift in Sources */,
 				AA00000000000000000000D3 /* SpaceSwitcherTests.swift in Sources */,
 				AA00000000000000000000D4 /* SpaceHistoryTests.swift in Sources */,
+				AA00000000000000000000D5 /* PermissionsTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -380,9 +398,9 @@
 		};
 		222222222222222222222224 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F10000000000000000000030 /* Namespace.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = YES;
@@ -403,9 +421,9 @@
 		};
 		222222222222222222222225 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F10000000000000000000030 /* Namespace.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = YES;

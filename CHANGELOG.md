@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Permissions onboarding window shown on launch when Accessibility or Automation is
+  missing, with live status that updates the instant you grant a permission (no relaunch)
+  and one-click deep-links into the right System Settings panes.
+- Menu-bar "permissions needed" banner that clears itself once everything is granted.
+
+### Changed
+- `setup-signing.sh` now wires a stable self-signed identity into the build (via a
+  git-ignored `Signing.local.xcconfig` picked up through an optional `#include?`), so
+  Accessibility / Automation grants **persist across rebuilds** instead of being
+  invalidated each time. Contributors and CI still build ad-hoc with no setup.
+
 ## [0.1.0] - 2026-07-01
 
 Initial public release.
