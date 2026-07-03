@@ -20,6 +20,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   invalidated each time. Contributors and CI still build ad-hoc with no setup.
 
 ### Fixed
+- **"Back" reliability**: the hotkey no longer leaks a digit ("4") into the focused text
+  field — it waits for the ⌃⌥ modifiers to be released before synthesizing the switch
+  keystroke. The Ctrl+Arrow walk is now reliable (waits for each Space to change before
+  the next step, and self-corrects) instead of firing arrows faster than macOS can
+  animate. Mashing the hotkey no longer stacks overlapping switches, and a direct jump
+  now completes as soon as the Space changes rather than after a fixed delay.
 - Onboarding Grant buttons: the "Grant… (Automation)" button now reliably triggers the
   "control System Events" consent prompt by sending a real Apple Event on the main thread
   (the old version ran off-thread and silently opened an empty pane); and the
