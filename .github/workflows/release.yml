@@ -1,0 +1,83 @@
+name: Release
+
+# Cut a notarized .dmg on a version tag:  git tag v0.1.0 && git push origin v0.1.0
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write   # needed to create the GitHub Release
+
+jobs:
+  release:
+    name: Build, notarize & publish
+    runs-on: macos-15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Import Developer ID certificate
+        env:
+          DEVELOPER_ID_CERT_P12: ${{ secrets.DEVELOPER_ID_CERT_P12 }}
+          DEVELOPER_ID_CERT_PASSWORD: ${{ secrets.DEVELOPER_ID_CERT_PASSWORD }}
+        run: |
+          set -euo pipefail
+          KEYCHAIN="$RUNNER_TEMP/app-signing.keychain-db"
+          KEYCHAIN_PW="$(uuidgen)"
+          CERT="$RUNNER_TEMP/developer_id.p12"
+
+          echo "$DEVELOPER_ID_CERT_P12" | base64 --decode > "$CERT"
+
+          security create-keychain -p "$KEYCHAIN_PW" "$KEYCHAIN"
+          security set-keychain-settings -lut 21600 "$KEYCHAIN"
+          security unlock-keychain -p "$KEYCHAIN_PW" "$KEYCHAIN"
+          security import "$CERT" -P "$DEVELOPER_ID_CERT_PASSWORD" \
+            -f pkcs12 -t cert -T /usr/bin/codesign "$KEYCHAIN"
+          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$KEYCHAIN_PW" "$KEYCHAIN"
+          # Put our keychain first in the search list so codesign finds the identity.
+          security list-keychain -d user -s "$KEYCHAIN" login.keychain-db
+          rm -f "$CERT"
+
+      - name: Prepare notarization API key
+        env:
+          AC_API_KEY_P8: ${{ secrets.AC_API_KEY_P8 }}
+        run: |
+          set -euo pipefail
+          echo "$AC_API_KEY_P8" | base64 --decode > "$RUNNER_TEMP/ac_api_key.p8"
+
+      - name: Build Release (unsigned)
+        run: |
+          set -euo pipefail
+          xcodebuild build \
+            -scheme Namespace \
+            -configuration Release \
+            -destination 'platform=macOS' \
+            -derivedDataPath "$RUNNER_TEMP/build" \
+            CODE_SIGNING_ALLOWED=NO
+
+      - name: Sign, notarize & package
+        env:
+          SIGN_IDENTITY: ${{ secrets.SIGN_IDENTITY }}
+          AC_API_KEY_PATH: ${{ runner.temp }}/ac_api_key.p8
+          AC_API_KEY_ID: ${{ secrets.AC_API_KEY_ID }}
+          AC_API_ISSUER_ID: ${{ secrets.AC_API_ISSUER_ID }}
+        run: |
+          set -euo pipefail
+          APP="$RUNNER_TEMP/build/Build/Products/Release/Namespace.app"
+          ./scripts/package-release.sh "$APP" dist
+          ls -la dist
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          DMG="$(ls dist/*.dmg)"
+          gh release create "${GITHUB_REF_NAME}" "$DMG" \
+            --title "Namespace ${GITHUB_REF_NAME}" \
+            --generate-notes
+
+      - name: Clean up notarization key
+        if: always()
+        run: rm -f "$RUNNER_TEMP/ac_api_key.p8"

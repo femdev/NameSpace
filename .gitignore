@@ -21,7 +21,11 @@ DerivedData/
 
 # Signing / local secrets
 *.p12
+*.p8
 *.mobileprovision
+
+# Release packaging output (scripts/package-release.sh)
+dist/
 
 # Editor cruft
 *.swp

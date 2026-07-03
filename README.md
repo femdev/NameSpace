@@ -102,11 +102,52 @@ This step goes away if/when you code-sign with a stable identity.
 ## Known limitations / caveats
 
 - **Uses private macOS APIs.** `CGSCopyManagedDisplaySpaces`, `CGSGetActiveSpace`, etc. Apple gives no public alternative. Symbols have been stable for years but a future macOS update could break things.
-- **No App Store distribution** — same reason.
+- **No App Store distribution** — same reason. Distributed instead as a notarized Developer ID download (see [Releases](#releases-notarized-downloads)).
 - **CoreDock framework was removed in macOS 26**, taking `CoreDockSwitchToSpace` with it. We work around it by driving Ctrl+N / Ctrl+Arrow via AppleScript → System Events. That's why the Accessibility + Automation + Keyboard Shortcuts setup matters.
 - **The Mission Control overlay may not render above MC on current macOS.** Apple has tightened restrictions on screenSaver-level windows. If labels don't appear under thumbnails, the status bar UI still works for everything else.
 - **Single-display only** for now. Multi-monitor with separate Spaces per display will only show labels on the main display.
 - **Direct-jump shortcuts cover desktops 1–9 only.** Desktop 10+ falls back to walking.
+
+## Releases (notarized downloads)
+
+The app can't ship on the Mac App Store (it uses private Space APIs and needs
+Accessibility/Automation, which the App Sandbox forbids). The distribution path is a
+**Developer ID–signed, notarized `.dmg`** that opens with no Gatekeeper warnings — see
+[`docs/distribution-prd.md`](docs/distribution-prd.md) for the full rationale.
+
+**Cutting a release** (maintainer):
+
+```bash
+git tag v0.1.0
+git push origin v0.1.0     # triggers .github/workflows/release.yml
+```
+
+That workflow builds Release, signs with hardened runtime, notarizes via `notarytool`,
+staples, and attaches the `.dmg` to a GitHub Release.
+
+**Prerequisites** (one-time):
+- An **active paid Apple Developer Program** membership (required for Developer ID + notarization).
+- These repository secrets (Settings → Secrets and variables → Actions):
+
+  | Secret | What |
+  |---|---|
+  | `DEVELOPER_ID_CERT_P12` | base64 of your exported *Developer ID Application* cert (.p12) |
+  | `DEVELOPER_ID_CERT_PASSWORD` | the .p12 export password |
+  | `SIGN_IDENTITY` | e.g. `Developer ID Application: Your Name (TEAMID)` |
+  | `AC_API_KEY_P8` | base64 of an App Store Connect API key (.p8) |
+  | `AC_API_KEY_ID` | that key's Key ID |
+  | `AC_API_ISSUER_ID` | the API issuer UUID |
+
+  Base64 a file with `base64 -i cert.p12 | pbcopy`.
+
+You can also run the packaging step locally once your Developer ID cert is in your keychain:
+
+```bash
+xcodebuild build -scheme Namespace -configuration Release -derivedDataPath build CODE_SIGNING_ALLOWED=NO
+SIGN_IDENTITY="Developer ID Application: Your Name (TEAMID)" \
+  ./scripts/package-release.sh build/Build/Products/Release/Namespace.app dist
+# (omit the AC_* env to produce a signed-but-not-notarized dmg for a dry run)
+```
 
 ## File layout
 
