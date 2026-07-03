@@ -19,6 +19,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   Accessibility / Automation grants **persist across rebuilds** instead of being
   invalidated each time. Contributors and CI still build ad-hoc with no setup.
 
+### Fixed
+- `setup-signing.sh` actually works now: it drives the OpenSSL-3 `-legacy` PKCS#12 fallback
+  off the *import* (the export always succeeded, so the old fallback never ran), stops using
+  `-v` (valid-only) when checking for the untrusted self-signed cert, always writes
+  `Signing.local.xcconfig` (even when the cert already exists), and is ASCII-clean so it
+  doesn't break under a non-UTF-8 shell.
+
 ## [0.1.0] - 2026-07-01
 
 Initial public release.
