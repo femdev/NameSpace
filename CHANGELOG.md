@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   Accessibility / Automation grants **persist across rebuilds** instead of being
   invalidated each time. Contributors and CI still build ad-hoc with no setup.
 
+### Fixed
+- The onboarding window's "Grant… (Automation)" button now reliably triggers the
+  "control System Events" consent prompt (and registers Namespace in the Automation
+  list) by sending a real Apple Event on the main thread. The previous version ran off
+  the main thread and silently opened an empty Automation pane without prompting.
+
 ## [0.1.0] - 2026-07-01
 
 Initial public release.
