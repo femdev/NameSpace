@@ -6,12 +6,21 @@
 
 import Foundation
 import AppKit
+import CoreGraphics // CGEventSource — read the physically-held modifier keys
 
 enum SpaceSwitcher {
+    /// True while a switch is mid-flight, so mashing the hotkey doesn't stack overlapping
+    /// walks on top of one another (the runaway behavior seen in the diagnostic logs).
+    private static var isSwitching = false
+
     static func switchTo(spaceID: UInt64) {
         guard AccessibilityCheck.isTrusted(prompt: true) else {
             diagLog("switchTo: aborted — Accessibility not granted. Prompted user to grant.")
             DispatchQueue.main.async { AccessibilityCheck.showSettingsAlert() }
+            return
+        }
+        guard !isSwitching else {
+            diagLog("switchTo: ignored — a switch is already in progress")
             return
         }
         let ordered = SpaceCatalog.currentDisplaySpaces()
@@ -29,6 +38,21 @@ enum SpaceSwitcher {
             return
         }
 
+        // The switch is driven by synthesized Ctrl+N / Ctrl+Arrow keystrokes. When this is
+        // triggered by the global hotkey (⌃⌥←), the user is usually still holding those
+        // modifiers, which contaminates the synthesized keystroke — e.g. a synthesized
+        // Ctrl+4 lands as Ctrl+Option+4 and the "4" leaks into the focused text field
+        // instead of switching. Wait for the physical modifiers to clear, then emit.
+        isSwitching = true
+        afterModifiersClear {
+            emitSwitch(targetIdx: targetIdx, currentID: currentID, spaceID: spaceID) {
+                isSwitching = false
+            }
+        }
+    }
+
+    private static func emitSwitch(targetIdx: Int, currentID: UInt64, spaceID: UInt64,
+                                   completion: @escaping () -> Void) {
         // Prefer the direct Ctrl+N jump (no cycling). Only works for desktops 1–9
         // AND requires the user to have "Switch to Desktop N" enabled in
         // System Settings → Keyboard → Keyboard Shortcuts → Mission Control.
@@ -36,41 +60,87 @@ enum SpaceSwitcher {
         if (1...9).contains(oneBased), let keyCode = digitKeyCode(oneBased) {
             diagLog("switchTo: direct jump via Ctrl+\(oneBased) (key code \(keyCode))")
             sendAppleScriptKey(keyCode: keyCode)
-            // Space-switch animation takes ~0.5–0.7s on macOS 26. Wait long enough
-            // that currentSpaceID has actually updated before deciding whether to
-            // fall back. Also: only fall back if NOTHING changed (currentID is
-            // exactly where we started) — that means the keystroke was ignored.
-            // Any other state means Ctrl+N is in progress or succeeded; don't pile on.
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.9) {
+            // Poll for the jump to land instead of a fixed wait: finish (and release the
+            // in-progress lock) the instant the Space actually changes — usually ~0.5s, the
+            // animation floor — so Back feels snappy. Only if nothing happens after ~1.1s do
+            // we assume the shortcut isn't enabled and fall back to walking.
+            waitForSpaceChange(from: currentID, tries: 55) {
                 let now = SpaceCatalog.currentSpaceID()
                 if now == spaceID {
                     diagLog("switchTo: direct jump succeeded")
+                    completion()
                 } else if now == currentID {
-                    diagLog("switchTo: Ctrl+\(oneBased) had no effect (likely shortcut not enabled) — falling back to walk")
-                    walkTo(targetIdx: targetIdx, fromIdx: currentIdx)
+                    diagLog("switchTo: Ctrl+\(oneBased) had no effect (shortcut likely not enabled) — walking instead")
+                    walkToward(spaceID: spaceID, stalls: 0, completion: completion)
                 } else {
-                    diagLog("switchTo: ended on a different space than target (now=\(now), target=\(spaceID)) — leaving it; not piling on")
+                    diagLog("switchTo: landed elsewhere (now=\(now)); not piling on")
+                    completion()
                 }
             }
             return
         }
 
-        // Target is desktop 10+ — Ctrl+N doesn't cover it; walk with Ctrl+Arrow.
-        walkTo(targetIdx: targetIdx, fromIdx: currentIdx)
+        // Desktop 10+ — Ctrl+N can't cover it; walk with Ctrl+Arrow.
+        walkToward(spaceID: spaceID, stalls: 0, completion: completion)
     }
 
-    private static func walkTo(targetIdx: Int, fromIdx: Int) {
-        let delta = walkDelta(targetIdx: targetIdx, fromIdx: fromIdx)
-        guard delta != 0 else { return }
-        let keyCode = walkKeyCode(delta: delta) // RightArrow / LeftArrow
-        diagLog("switchTo: walking \(abs(delta)) steps via Ctrl+\(delta > 0 ? "→" : "←")")
-        var lines = ["tell application \"System Events\""]
-        for _ in 0..<abs(delta) {
-            lines.append("    key code \(keyCode) using {control down}")
-            lines.append("    delay 0.04")
+    /// Runs `action` on the main queue once the Control/Option/Command modifiers are
+    /// physically released (or after a ~0.6s timeout). Without this, a hotkey-triggered
+    /// switch fires its synthesized Ctrl+digit / Ctrl+arrow while the user is still holding
+    /// the hotkey's modifiers, so the keystroke is corrupted (the digit leaks as text and
+    /// the switch is unreliable).
+    private static func afterModifiersClear(remainingTries: Int = 40, _ action: @escaping () -> Void) {
+        let held: CGEventFlags = [.maskControl, .maskAlternate, .maskCommand]
+        let flags = CGEventSource.flagsState(.combinedSessionState)
+        if remainingTries <= 0 || flags.isDisjoint(with: held) {
+            action()
+        } else {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.015) {
+                afterModifiersClear(remainingTries: remainingTries - 1, action)
+            }
         }
-        lines.append("end tell")
-        runAppleScript(lines.joined(separator: "\n"))
+    }
+
+    /// Reliable walk: send one Ctrl+Arrow toward the target, then WAIT for the Space to
+    /// actually change before the next step. Each Space switch animates for ~0.5s, so the
+    /// old fixed 0.04s spacing fired arrows far faster than macOS could process them and
+    /// most got dropped. This re-reads the live Space each step (so a dropped keystroke
+    /// self-corrects) and gives up after a few stalls (a keystroke that never lands, e.g.
+    /// at the ends of the Space list).
+    private static func walkToward(spaceID: UInt64, stalls: Int, completion: @escaping () -> Void) {
+        let ordered = SpaceCatalog.currentDisplaySpaces()
+        let currentID = SpaceCatalog.currentSpaceID()
+        guard let targetIdx = ordered.firstIndex(where: { $0.id64 == spaceID }),
+              let currentIdx = ordered.firstIndex(where: { $0.id64 == currentID }) else {
+            diagLog("switchTo: walk aborted — Space list changed")
+            completion(); return
+        }
+        guard currentIdx != targetIdx else {
+            diagLog("switchTo: walk reached target")
+            completion(); return
+        }
+        guard stalls < 3 else {
+            diagLog("switchTo: walk stalled (keystrokes not landing) — giving up")
+            completion(); return
+        }
+        let keyCode = walkKeyCode(delta: walkDelta(targetIdx: targetIdx, fromIdx: currentIdx))
+        diagLog("switchTo: walk step toward target (at idx \(currentIdx), want \(targetIdx))")
+        sendAppleScriptKey(keyCode: keyCode)
+        waitForSpaceChange(from: currentID, tries: 40) {
+            let moved = SpaceCatalog.currentSpaceID() != currentID
+            walkToward(spaceID: spaceID, stalls: moved ? 0 : stalls + 1, completion: completion)
+        }
+    }
+
+    /// Polls (up to ~0.8s) until the active Space differs from `from`, then runs `done`.
+    private static func waitForSpaceChange(from: UInt64, tries: Int, _ done: @escaping () -> Void) {
+        if tries <= 0 || SpaceCatalog.currentSpaceID() != from {
+            done()
+        } else {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.02) {
+                waitForSpaceChange(from: from, tries: tries - 1, done)
+            }
+        }
     }
 
     private static func sendAppleScriptKey(keyCode: Int) {

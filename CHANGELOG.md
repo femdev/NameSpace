@@ -19,6 +19,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   Accessibility / Automation grants **persist across rebuilds** instead of being
   invalidated each time. Contributors and CI still build ad-hoc with no setup.
 
+### Fixed
+- **"Back" reliability**: the hotkey no longer leaks a digit ("4") into the focused text
+  field — it waits for the ⌃⌥ modifiers to be released before synthesizing the switch
+  keystroke. The Ctrl+Arrow walk is now reliable (waits for each Space to change before
+  the next step, and self-corrects) instead of firing arrows faster than macOS can
+  animate. Mashing the hotkey no longer stacks overlapping switches, and a direct jump
+  now completes as soon as the Space changes rather than after a fixed delay.
+
 ## [0.1.0] - 2026-07-01
 
 Initial public release.
