@@ -64,11 +64,31 @@ security set-key-partition-list \
 }
 
 echo
-echo "✔ Done."
 security find-identity -v -p codesigning | grep "$CERT_NAME" || {
     echo "ERROR: cert was imported but doesn't show up. Try again or check Keychain Access."
     exit 1
 }
+
+# Wire the identity into the build via a git-ignored local xcconfig. The committed
+# Namespace.xcconfig has `#include? "Signing.local.xcconfig"`, so this file (when present)
+# switches the app target from ad-hoc to the stable self-signed identity above.
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+LOCAL_XCCONFIG="$SCRIPT_DIR/Signing.local.xcconfig"
+echo "==> Writing $LOCAL_XCCONFIG…"
+cat > "$LOCAL_XCCONFIG" <<EOF
+// Written by setup-signing.sh. Git-ignored, machine-local — do NOT commit.
+// Signs Namespace with a stable self-signed identity so every rebuild produces the same
+// code signature, and macOS keeps your Accessibility / Automation grants across rebuilds.
+CODE_SIGN_STYLE = Manual
+CODE_SIGN_IDENTITY = $CERT_NAME
+CODE_SIGNING_REQUIRED = YES
+CODE_SIGNING_ALLOWED = YES
+EOF
+
 echo
-echo "Next: I'll wire '$CERT_NAME' into the Xcode project, then you do"
-echo "one final tccutil reset + re-grant. After that, permissions stick."
+echo "✔ Done — the stable identity is now wired into the Xcode build."
+echo
+echo "One final reset so macOS re-issues the grants against the new signature:"
+echo "    ./reset-permissions.sh"
+echo "Then ⌘R in Xcode and grant Accessibility + Automation once. After that they stick"
+echo "across rebuilds — no more tccutil resets."

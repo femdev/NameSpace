@@ -11,13 +11,20 @@ final class StatusBarController: NSObject {
     private let statusItem: NSStatusItem
     private let store: SpaceStore
     private let history: SpaceHistory
+    private let permissions: PermissionsMonitor
+    private let openPermissions: () -> Void
     private var popover: NSPopover?
     private var backHotKey: GlobalHotKey?
     private let aboutWindow = AboutWindowController()
 
-    init(store: SpaceStore, history: SpaceHistory) {
+    init(store: SpaceStore,
+         history: SpaceHistory,
+         permissions: PermissionsMonitor,
+         openPermissions: @escaping () -> Void) {
         self.store = store
         self.history = history
+        self.permissions = permissions
+        self.openPermissions = openPermissions
         diagLog("[Namespace] StatusBarController.init creating statusItem")
         self.statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         diagLog("[Namespace] statusItem created: \(self.statusItem), button: \(String(describing: self.statusItem.button))")
@@ -27,6 +34,8 @@ final class StatusBarController: NSObject {
         configureButton()
         rebuildMenu()
         registerBackHotKey()
+        // Rebuild the menu whenever a permission flips, so its status line stays accurate.
+        permissions.onChange = { [weak self] _ in self?.refresh() }
         diagLog("[Namespace] StatusBarController.init DONE")
         NSWorkspace.shared.notificationCenter.addObserver(
             self,
@@ -82,6 +91,22 @@ final class StatusBarController: NSObject {
 
     private func rebuildMenu() {
         let menu = NSMenu()
+
+        // Permissions banner — only present while something still needs granting.
+        if permissions.summary.needsAttention {
+            let warn = NSMenuItem(title: "⚠️ Permissions needed to switch Spaces", action: nil, keyEquivalent: "")
+            warn.isEnabled = false
+            menu.addItem(warn)
+            let setup = NSMenuItem(
+                title: "Set up permissions…",
+                action: #selector(setUpPermissions),
+                keyEquivalent: ""
+            )
+            setup.target = self
+            menu.addItem(setup)
+            menu.addItem(.separator())
+        }
+
         let currentUUID = SpaceCatalog.currentSpaceUUID()
         let currentName = currentUUID.map { store.displayName(forUUID: $0) } ?? "(unknown)"
 
@@ -221,6 +246,10 @@ final class StatusBarController: NSObject {
         if let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Automation") {
             NSWorkspace.shared.open(url)
         }
+    }
+
+    @objc private func setUpPermissions() {
+        openPermissions()
     }
 
     @objc private func spaceChanged() {
