@@ -20,6 +20,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   invalidated each time. Contributors and CI still build ad-hoc with no setup.
 
 ### Fixed
+- Onboarding Grant buttons: the "Grant… (Automation)" button now reliably triggers the
+  "control System Events" consent prompt by sending a real Apple Event on the main thread
+  (the old version ran off-thread and silently opened an empty pane); and the
+  "Grant… (Accessibility)" button opens the pane cleanly instead of firing a system prompt
+  *and* opening Settings at once.
 - `setup-signing.sh` actually works now: it drives the OpenSSL-3 `-legacy` PKCS#12 fallback
   off the *import* (the export always succeeded, so the old fallback never ran), stops using
   `-v` (valid-only) when checking for the untrusted self-signed cert, always writes
