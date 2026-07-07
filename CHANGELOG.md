@@ -25,6 +25,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   invalidated each time. Contributors and CI still build ad-hoc with no setup.
 
 ### Fixed
+- Attempting to switch/Back without Accessibility no longer spams the macOS prompt **and** a
+  modal alert on every press. `SpaceSwitcher` now checks quietly and surfaces the Setup
+  window (with its Grant button) instead of nagging inline.
 - **"Back" reliability**: the hotkey no longer leaks a digit ("4") into the focused text
   field — it waits for the ⌃⌥ modifiers to be released before synthesizing the switch
   keystroke. The Ctrl+Arrow walk is now reliable (waits for each Space to change before

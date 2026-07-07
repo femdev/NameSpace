@@ -36,6 +36,9 @@ final class StatusBarController: NSObject {
         registerBackHotKey()
         // Rebuild the menu whenever a permission flips, so its status line stays accurate.
         permissions.onChange = { [weak self] _ in self?.refresh() }
+        // If a switch is attempted without Accessibility, surface the Setup window (with its
+        // Grant button) instead of spamming the system prompt + an alert on every press.
+        SpaceSwitcher.onAccessibilityMissing = { [openPermissions] in openPermissions() }
         diagLog("[Namespace] StatusBarController.init DONE")
         NSWorkspace.shared.notificationCenter.addObserver(
             self,
