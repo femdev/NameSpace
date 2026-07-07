@@ -1,13 +1,13 @@
-// The onboarding / permissions window content (SwiftUI). One row per required permission
-// with a live status badge that flips as `PermissionsMonitor` re-probes, an explanation,
-// and a button that requests the grant + opens the matching System Settings pane. Themed
-// in the brand violet to match the app icon and About window.
+// The onboarding / setup window content (SwiftUI). One row per requirement — the two
+// permissions plus the auto-rearrange setting — each with a live status badge that flips as
+// `PermissionsMonitor` re-probes, an explanation, and an action button. Themed in the brand
+// violet to match the app icon and About window.
 
 import SwiftUI
 
 struct PermissionsView: View {
     @ObservedObject var monitor: PermissionsMonitor
-    var onAllGranted: () -> Void = {}
+    var onAllGood: () -> Void = {}
 
     private let brand = Color(red: 0.42, green: 0.34, blue: 0.90)
 
@@ -15,9 +15,9 @@ struct PermissionsView: View {
         VStack(alignment: .leading, spacing: 18) {
             header
             Divider()
-            Text("Namespace switches Spaces by sending keystrokes through System Events, "
-                 + "which macOS gates behind two permissions. Grant them once — with stable "
-                 + "signing set up (see the README), they persist across rebuilds.")
+            Text("Namespace switches Spaces by sending keystrokes through System Events. "
+                 + "It needs two permissions, and one Mission Control setting turned off. "
+                 + "Set these once and you're done.")
                 .font(.system(size: 12))
                 .foregroundColor(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
@@ -34,13 +34,15 @@ struct PermissionsView: View {
                 PermissionsMonitor.requestAutomation {}
             }
 
+            rearrangeRow
+
             Divider()
             footer
         }
         .padding(24)
         .frame(width: 470)
-        .onChange(of: monitor.summary.allGranted) { done in
-            if done { onAllGranted() }
+        .onChange(of: monitor.summary.allGood) { done in
+            if done { onAllGood() }
         }
     }
 
@@ -50,12 +52,12 @@ struct PermissionsView: View {
                 .font(.system(size: 36))
                 .foregroundColor(brand)
             VStack(alignment: .leading, spacing: 2) {
-                Text("Namespace Permissions")
+                Text("Namespace Setup")
                     .font(.system(size: 20, weight: .semibold))
-                Text(monitor.summary.allGranted ? "All set — you're good to go."
-                                                 : "Two permissions are needed to switch Spaces.")
+                Text(monitor.summary.allGood ? "All set — you're good to go."
+                                              : "A few things are needed to switch Spaces.")
                     .font(.system(size: 12))
-                    .foregroundColor(monitor.summary.allGranted ? .green : .secondary)
+                    .foregroundColor(monitor.summary.allGood ? .green : .secondary)
             }
         }
     }
@@ -85,6 +87,36 @@ struct PermissionsView: View {
         }
     }
 
+    /// The auto-rearrange row: a Mission Control setting (not a permission). Shows ⚠️ + a
+    /// one-click "Turn off…" while it's on, ✅ + "Off" once it's off.
+    private var rearrangeRow: some View {
+        let on = monitor.autoRearrangeOn
+        return HStack(alignment: .top, spacing: 12) {
+            badge(for: on ? .notDetermined : .granted)
+                .frame(width: 20)
+            VStack(alignment: .leading, spacing: 2) {
+                Text("Auto-rearrange Spaces is off")
+                    .font(.system(size: 13, weight: .medium))
+                Text("macOS's \"Automatically rearrange Spaces based on most recent use\" "
+                     + "reorders your Spaces, which makes switching land on the wrong one. "
+                     + "Namespace needs it off. (Turning it off restarts the Dock briefly.)")
+                    .font(.system(size: 11))
+                    .foregroundColor(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            Spacer(minLength: 8)
+            if on {
+                Button("Turn off…") { PermissionsMonitor.disableSpacesRearrange() }
+                    .controlSize(.small)
+                    .fixedSize()
+            } else {
+                Text("Off")
+                    .font(.system(size: 11, weight: .medium))
+                    .foregroundColor(.green)
+            }
+        }
+    }
+
     @ViewBuilder
     private func badge(for state: PermissionState) -> some View {
         switch state {
@@ -98,7 +130,7 @@ struct PermissionsView: View {
     }
 
     private var footer: some View {
-        Text("This window updates on its own as you grant each permission — no need to "
+        Text("This window updates on its own as you complete each step — no need to "
              + "relaunch. You can reopen it any time from the menu-bar icon.")
             .font(.system(size: 10))
             .foregroundColor(.secondary)

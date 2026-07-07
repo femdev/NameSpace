@@ -12,6 +12,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   missing, with live status that updates the instant you grant a permission (no relaunch)
   and one-click deep-links into the right System Settings panes.
 - Menu-bar "permissions needed" banner that clears itself once everything is granted.
+- **Auto-rearrange detection**: the setup window (and menu) now also check macOS's
+  "Automatically rearrange Spaces based on most recent use" — which reorders Spaces and
+  makes switching land one off — and offer a one-click **"Turn off"** (writes the pref and
+  restarts the Dock). This was the cause of the "go to Space 3, land on Space 4" bug on
+  fresh installs. The onboarding window is reframed from "Permissions" to "Setup".
 
 ### Changed
 - `setup-signing.sh` now wires a stable self-signed identity into the build (via a
