@@ -32,7 +32,7 @@ Native macOS menu bar app that lets you name Mission Control Spaces. Custom labe
 
 ## First-run setup (required for full functionality)
 
-Three macOS settings need to be enabled. Without them, renaming works but switching does not.
+A few macOS settings need to be set. Without them, renaming works but switching does not. (The app's Setup window walks you through them — this is the manual reference.)
 
 ### 1. Enable "Switch to Desktop N" keyboard shortcuts (for instant jumps)
 
@@ -74,10 +74,24 @@ The first time Namespace tries to switch a space, macOS prompts:
 
 Click **Allow**. (You can revisit this later in System Settings → Privacy & Security → Automation.)
 
-> **The app guides you through all three.** On launch, if any permission is missing,
-> Namespace opens a **Permissions** window with a live status badge and a one-click
-> **Grant** button for each. It updates on its own the moment you grant one — no relaunch.
-> You can reopen it any time from the menu-bar icon.
+### 4. Turn off "Automatically rearrange Spaces"
+
+macOS reorders your Spaces by recent use by default, which makes position-based switching
+land on the **wrong Space**. Namespace needs this **off**:
+
+```
+System Settings → Desktop & Dock → Mission Control →
+  uncheck "Automatically rearrange Spaces based on most recent use"
+```
+Or in Terminal:
+```bash
+defaults write com.apple.dock mru-spaces -bool false && killall Dock
+```
+
+> **The app guides you through all of this.** On launch, if a permission is missing *or*
+> auto-rearrange is on, Namespace opens a **Setup** window with a live status badge and a
+> one-click button for each item (including a **"Turn off"** for auto-rearrange). It updates
+> on its own the moment you fix one — no relaunch. Reopen it any time from the menu-bar icon.
 
 ### Make permissions stick across rebuilds (recommended, one-time)
 

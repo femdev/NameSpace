@@ -20,15 +20,22 @@ final class PermissionsTests: XCTestCase {
         XCTAssertEqual(PermissionsMonitor.automationState(fromStatus: -12345), .notDetermined)
     }
 
-    func testSummaryAllGrantedOnlyWhenBothGranted() {
-        XCTAssertTrue(PermissionsSummary(accessibility: .granted, automation: .granted).allGranted)
-        XCTAssertFalse(PermissionsSummary(accessibility: .granted, automation: .denied).allGranted)
-        XCTAssertFalse(PermissionsSummary(accessibility: .notDetermined, automation: .granted).allGranted)
-        XCTAssertFalse(PermissionsSummary(accessibility: .denied, automation: .denied).allGranted)
+    func testSummaryAllGoodOnlyWhenBothGrantedAndRearrangeOff() {
+        XCTAssertTrue(PermissionsSummary(accessibility: .granted, automation: .granted, autoRearrangeOn: false).allGood)
+        XCTAssertFalse(PermissionsSummary(accessibility: .granted, automation: .denied, autoRearrangeOn: false).allGood)
+        XCTAssertFalse(PermissionsSummary(accessibility: .notDetermined, automation: .granted, autoRearrangeOn: false).allGood)
+        XCTAssertFalse(PermissionsSummary(accessibility: .denied, automation: .denied, autoRearrangeOn: false).allGood)
     }
 
-    func testNeedsAttentionIsInverseOfAllGranted() {
-        XCTAssertFalse(PermissionsSummary(accessibility: .granted, automation: .granted).needsAttention)
-        XCTAssertTrue(PermissionsSummary(accessibility: .granted, automation: .notDetermined).needsAttention)
+    func testAutoRearrangeOnBreaksAllGoodEvenWithBothPermissions() {
+        // Permissions granted but auto-rearrange still on -> not good to go.
+        let s = PermissionsSummary(accessibility: .granted, automation: .granted, autoRearrangeOn: true)
+        XCTAssertFalse(s.allGood)
+        XCTAssertTrue(s.needsAttention)
+    }
+
+    func testNeedsAttentionIsInverseOfAllGood() {
+        XCTAssertFalse(PermissionsSummary(accessibility: .granted, automation: .granted, autoRearrangeOn: false).needsAttention)
+        XCTAssertTrue(PermissionsSummary(accessibility: .granted, automation: .notDetermined, autoRearrangeOn: false).needsAttention)
     }
 }
