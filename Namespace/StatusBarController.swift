@@ -92,13 +92,14 @@ final class StatusBarController: NSObject {
     private func rebuildMenu() {
         let menu = NSMenu()
 
-        // Permissions banner — only present while something still needs granting.
+        // Setup banner — only present while something still needs attention (permissions
+        // or the auto-rearrange setting).
         if permissions.summary.needsAttention {
-            let warn = NSMenuItem(title: "⚠️ Permissions needed to switch Spaces", action: nil, keyEquivalent: "")
+            let warn = NSMenuItem(title: "⚠️ Setup needed to switch Spaces", action: nil, keyEquivalent: "")
             warn.isEnabled = false
             menu.addItem(warn)
             let setup = NSMenuItem(
-                title: "Set up permissions…",
+                title: "Finish setup…",
                 action: #selector(setUpPermissions),
                 keyEquivalent: ""
             )
@@ -212,6 +213,17 @@ final class StatusBarController: NSObject {
             + "can ask System Events to send keystrokes."
         setupMenu.addItem(autoItem)
 
+        let rearrangeItem = NSMenuItem(
+            title: "Turn off auto-rearrange Spaces…",
+            action: #selector(turnOffAutoRearrange),
+            keyEquivalent: ""
+        )
+        rearrangeItem.target = self
+        rearrangeItem.toolTip = "Turns off \"Automatically rearrange Spaces based on most "
+            + "recent use\" and restarts the Dock. That setting reorders Spaces and makes "
+            + "switching land on the wrong one."
+        setupMenu.addItem(rearrangeItem)
+
         setupItem.submenu = setupMenu
         menu.addItem(setupItem)
 
@@ -250,6 +262,10 @@ final class StatusBarController: NSObject {
 
     @objc private func setUpPermissions() {
         openPermissions()
+    }
+
+    @objc private func turnOffAutoRearrange() {
+        PermissionsMonitor.disableSpacesRearrange()
     }
 
     @objc private func spaceChanged() {

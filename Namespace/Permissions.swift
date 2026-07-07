@@ -1,10 +1,13 @@
-// Live tracking of the two macOS permissions Namespace needs to switch Spaces:
-// Accessibility (to synthesize keystrokes) and Automation (to drive System Events).
+// Live tracking of everything Namespace needs to switch Spaces reliably: the two macOS
+// permissions — Accessibility (to synthesize keystrokes) and Automation (to drive System
+// Events) — plus one Mission Control setting, "Automatically rearrange Spaces based on most
+// recent use", which must be OFF (when on, macOS reorders Spaces out from under the
+// position-based switching, causing off-by-one jumps).
 //
-// `PermissionsMonitor` polls both — but only while something is still missing — and
-// publishes changes so the onboarding window and the menu update the instant a grant
-// happens, without a relaunch. The status-code mapping and the summary are pure and
-// unit-tested; the actual TCC probes are thin system calls.
+// `PermissionsMonitor` polls all three — but only while something still needs attention —
+// and publishes changes so the onboarding window and the menu update live, without a
+// relaunch. The status mapping and the summary are pure and unit-tested; the probes are
+// thin system calls.
 
 import AppKit
 import ApplicationServices
@@ -16,47 +19,57 @@ enum PermissionState: Equatable {
     case notDetermined
 }
 
-/// A snapshot of both permissions plus the derived "are we good to go?" answer.
+/// A snapshot of the two permissions + the auto-rearrange setting, plus the derived
+/// "are we good to go?" answer.
 struct PermissionsSummary: Equatable {
     let accessibility: PermissionState
     let automation: PermissionState
+    /// macOS "Automatically rearrange Spaces based on most recent use" — must be OFF for
+    /// position-based Space switching to be reliable.
+    let autoRearrangeOn: Bool
 
-    var allGranted: Bool { accessibility == .granted && automation == .granted }
-    var needsAttention: Bool { !allGranted }
+    var allGood: Bool {
+        accessibility == .granted && automation == .granted && !autoRearrangeOn
+    }
+    var needsAttention: Bool { !allGood }
 }
 
 final class PermissionsMonitor: ObservableObject {
     @Published private(set) var accessibility: PermissionState = .notDetermined
     @Published private(set) var automation: PermissionState = .notDetermined
+    @Published private(set) var autoRearrangeOn: Bool = false
 
     /// AppKit consumers (the status-bar menu) get a callback on any change.
     var onChange: ((PermissionsSummary) -> Void)?
 
     var summary: PermissionsSummary {
-        PermissionsSummary(accessibility: accessibility, automation: automation)
+        PermissionsSummary(accessibility: accessibility, automation: automation,
+                           autoRearrangeOn: autoRearrangeOn)
     }
 
     private var timer: Timer?
 
     // MARK: - Polling
 
-    /// Re-probe both permissions now; publishes + notifies if anything changed, and stops
-    /// polling once everything is granted.
+    /// Re-probe permissions + the auto-rearrange setting now; publishes + notifies if
+    /// anything changed, and stops polling once everything is in order.
     func refresh() {
         let ax = Self.accessibilityState()
         let auto = Self.automationState()
-        let changed = ax != accessibility || auto != automation
+        let rearrange = Self.spacesRearrangeEnabled()
+        let changed = ax != accessibility || auto != automation || rearrange != autoRearrangeOn
         accessibility = ax
         automation = auto
+        autoRearrangeOn = rearrange
         if changed { onChange?(summary) }
-        if summary.allGranted { stopPolling() }
+        if summary.allGood { stopPolling() }
     }
 
-    /// Begin polling (no-op if already all-granted). Cheap: a single timer that tears
-    /// itself down as soon as both permissions are granted.
+    /// Begin polling (no-op if already all-good). Cheap: a single timer that tears itself
+    /// down as soon as everything is in order.
     func startPolling(interval: TimeInterval = 1.5) {
         refresh()
-        guard timer == nil, !summary.allGranted else { return }
+        guard timer == nil, !summary.allGood else { return }
         let t = Timer(timeInterval: interval, repeats: true) { [weak self] _ in
             self?.refresh()
         }
@@ -135,6 +148,39 @@ final class PermissionsMonitor: ObservableObject {
             completion()
         }
         if Thread.isMainThread { work() } else { DispatchQueue.main.async(execute: work) }
+    }
+
+    // MARK: - Auto-rearrange setting
+
+    /// Whether "Automatically rearrange Spaces based on most recent use" is on (the macOS
+    /// default). Reads `com.apple.dock`'s `mru-spaces`; absent means the default (on).
+    static func spacesRearrangeEnabled() -> Bool {
+        let domain = "com.apple.dock" as CFString
+        CFPreferencesAppSynchronize(domain)
+        let value = CFPreferencesCopyAppValue("mru-spaces" as CFString, domain)
+        guard let number = value as? NSNumber else { return true } // unset -> default ON
+        return number.boolValue
+    }
+
+    /// Turn off auto-rearrange and restart the Dock so it takes effect. Writes to the
+    /// Dock's own preference domain (allowed — Namespace is not sandboxed) and relaunches
+    /// Dock, which reappears within about a second.
+    static func disableSpacesRearrange() {
+        let domain = "com.apple.dock" as CFString
+        CFPreferencesSetAppValue("mru-spaces" as CFString, kCFBooleanFalse, domain)
+        CFPreferencesAppSynchronize(domain)
+        let killall = Process()
+        killall.executableURL = URL(fileURLWithPath: "/usr/bin/killall")
+        killall.arguments = ["Dock"]
+        try? killall.run()
+    }
+
+    /// Opens the Desktop & Dock settings pane (Mission Control lives there) for users who
+    /// prefer to flip the setting themselves.
+    static func openMissionControlSettings() {
+        if let url = URL(string: "x-apple.systempreferences:com.apple.Desktop-Settings.extension") {
+            NSWorkspace.shared.open(url)
+        }
     }
 
     // MARK: - Helpers

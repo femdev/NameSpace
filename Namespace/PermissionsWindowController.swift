@@ -1,6 +1,6 @@
 // Hosts the SwiftUI `PermissionsView` in a small, centered, titled window. Reuses a
 // single window instance, drives the monitor's polling while visible, and auto-dismisses
-// shortly after all permissions are granted.
+// shortly after everything (permissions + the auto-rearrange setting) is in order.
 
 import AppKit
 import SwiftUI
@@ -24,12 +24,12 @@ final class PermissionsWindowController {
         }
 
         let view = PermissionsView(monitor: monitor) { [weak self] in
-            // Everything granted — let the user see the ✅, then dismiss.
+            // Everything's set — let the user see the ✅, then dismiss.
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) { self?.close() }
         }
         let host = NSHostingController(rootView: view)
         let win = NSWindow(contentViewController: host)
-        win.title = "Namespace Permissions"
+        win.title = "Namespace Setup"
         win.styleMask = [.titled, .closable]
         win.isReleasedWhenClosed = false
         win.setContentSize(host.view.fittingSize)
