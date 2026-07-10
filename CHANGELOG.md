@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Notarized-release pipeline: `.github/workflows/release.yml` builds, Developer ID–signs
+  (hardened runtime), notarizes, staples, and attaches a `.dmg` to a GitHub Release on
+  every `v*` tag. Shared logic lives in `scripts/package-release.sh` (runs locally too).
+- `Namespace.entitlements` (hardened-runtime Apple Events) and `docs/distribution-prd.md`.
 - Permissions onboarding window shown on launch when Accessibility or Automation is
   missing, with live status that updates the instant you grant a permission (no relaunch)
   and one-click deep-links into the right System Settings panes.

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!-- Under the hardened runtime (required for notarization), sending Apple Events to
+	     another app is blocked unless this entitlement is present. Namespace drives
+	     System Events to synthesize the Space-switch keystrokes, so it needs this.
+	     No sandbox and no library-validation exception: the only dynamically loaded code
+	     is Apple-signed system frameworks (the private CoreDock/CGS symbols). -->
+	<key>com.apple.security.automation.apple-events</key>
+	<true/>
+</dict>
+</plist>
