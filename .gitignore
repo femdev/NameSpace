@@ -21,9 +21,13 @@ DerivedData/
 
 # Signing / local secrets
 *.p12
+*.p8
 *.mobileprovision
 # Machine-local signing override written by setup-signing.sh (never commit)
 Signing.local.xcconfig
+
+# Release packaging output (scripts/package-release.sh)
+dist/
 
 # Editor cruft
 *.swp
