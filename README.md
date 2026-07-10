@@ -32,7 +32,7 @@ Native macOS menu bar app that lets you name Mission Control Spaces. Custom labe
 
 ## First-run setup (required for full functionality)
 
-Three macOS settings need to be enabled. Without them, renaming works but switching does not.
+A few macOS settings need to be set. Without them, renaming works but switching does not. (The app's Setup window walks you through them — this is the manual reference.)
 
 ### 1. Enable "Switch to Desktop N" keyboard shortcuts (for instant jumps)
 
@@ -74,20 +74,42 @@ The first time Namespace tries to switch a space, macOS prompts:
 
 Click **Allow**. (You can revisit this later in System Settings → Privacy & Security → Automation.)
 
-### When you rebuild from Xcode
+### 4. Turn off "Automatically rearrange Spaces"
 
-Every Xcode rebuild changes the binary signature, which macOS sometimes treats as a different app — silently invalidating Accessibility / Automation grants. If switching suddenly stops working after a rebuild:
+macOS reorders your Spaces by recent use by default, which makes position-based switching
+land on the **wrong Space**. Namespace needs this **off**:
 
+```
+System Settings → Desktop & Dock → Mission Control →
+  uncheck "Automatically rearrange Spaces based on most recent use"
+```
+Or in Terminal:
 ```bash
-# Reset all TCC entries for our bundle id, then re-grant when prompted:
-tccutil reset Accessibility com.elise.Namespace
-tccutil reset AppleEvents com.elise.Namespace
-tccutil reset PostEvent com.elise.Namespace
-pkill -f Namespace.app
-# Then ⌘R in Xcode and click Allow on the prompts.
+defaults write com.apple.dock mru-spaces -bool false && killall Dock
 ```
 
-This step goes away if/when you code-sign with a stable identity.
+> **The app guides you through all of this.** On launch, if a permission is missing *or*
+> auto-rearrange is on, Namespace opens a **Setup** window with a live status badge and a
+> one-click button for each item (including a **"Turn off"** for auto-rearrange). It updates
+> on its own the moment you fix one — no relaunch. Reopen it any time from the menu-bar icon.
+
+### Make permissions stick across rebuilds (recommended, one-time)
+
+By default the app is signed **ad-hoc** ("Sign to Run Locally"), so every Xcode rebuild
+changes its code signature and macOS silently invalidates your Accessibility / Automation
+grants — meaning you'd have to re-grant after every build.
+
+Fix it once by signing with a **stable self-signed identity**:
+
+```bash
+./setup-signing.sh      # creates a self-signed cert + wires it into the build (git-ignored)
+./reset-permissions.sh  # one final TCC reset so macOS re-issues grants against the new signature
+# Then ⌘R in Xcode and grant both permissions. After this, grants persist across rebuilds.
+```
+
+`setup-signing.sh` writes a git-ignored `Signing.local.xcconfig` that the project picks up
+via an optional `#include?`. Contributors and CI who skip this build ad-hoc exactly as
+before. If you ever need to force a fresh re-grant, `./reset-permissions.sh` still does it.
 
 ## Using it
 
@@ -153,15 +175,20 @@ SIGN_IDENTITY="Developer ID Application: Your Name (TEAMID)" \
 
 ```
 Namespace.xcodeproj/        # hand-written Xcode project
+Namespace.xcconfig            # base build config; optional #include of Signing.local.xcconfig
 Namespace/
   main.swift                    # entry point: creates NSApplication, runs the loop
-  AppDelegate.swift             # wires status item, overlay, MC observer; owns SpaceHistory
+  AppDelegate.swift             # composition root; owns store/history/permissions
   CGSPrivate.swift              # private API declarations (@_silgen_name + dlopen)
   SpaceCatalog.swift            # enumerate Spaces, current Space ID/UUID
   SpaceStore.swift              # UserDefaults persistence (UUID → name)
   SpaceSwitcher.swift           # Ctrl+N direct jump, falls back to Ctrl+Arrow walking
   SpaceHistory.swift            # tracks the previous Space for the "Back" toggle
   GlobalHotKey.swift            # Carbon system-wide hotkey (⌃⌥← for Back)
+  AccessibilityCheck.swift      # Accessibility permission helper
+  Permissions.swift             # live Accessibility + Automation monitor (polling)
+  PermissionsView.swift         # SwiftUI onboarding panel with live status
+  PermissionsWindowController.swift # hosts the permissions window
   MissionControlObserver.swift  # detects MC activate / deactivate
   OverlayWindowController.swift # transparent screenSaver-level window
   OverlayView.swift             # SwiftUI labels positioned under thumbnails
@@ -170,12 +197,14 @@ Namespace/
   AboutView.swift               # SwiftUI content for the custom About/Help panel
   AboutWindowController.swift   # hosts AboutView in a titled window
   Info.plist                    # LSUIElement=YES, NSAppleEventsUsageDescription
-  Assets.xcassets/              # empty app icon slot
+  Assets.xcassets/              # app icon
 NamespaceTests/               # XCTest unit tests for the pure-logic layer
   SpaceStoreTests.swift
   SpaceCatalogTests.swift
   SpaceSwitcherTests.swift
   SpaceHistoryTests.swift
+  PermissionsTests.swift
+docs/                         # PRDs and design notes
 ```
 
 ## Running the tests

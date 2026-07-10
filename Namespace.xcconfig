@@ -1,0 +1,17 @@
+// Base build configuration for the Namespace app target.
+//
+// Signing: by default the app signs ad-hoc ("Sign to Run Locally"). That's fine for
+// contributors and CI — no setup required, and this file is a no-op for them.
+//
+// Running ./setup-signing.sh creates a stable self-signed certificate and writes
+// Signing.local.xcconfig (git-ignored). The optional include at the bottom picks it up,
+// overriding the settings here so every Xcode rebuild produces the SAME code signature.
+// macOS TCC keys Accessibility / Automation grants on that signature, so your grants then
+// survive rebuilds instead of being invalidated each time.
+//
+// The `?` in `#include?` makes the include optional: if the local file is absent, this
+// line is silently skipped and the ad-hoc default below stands.
+
+CODE_SIGN_STYLE = Automatic
+
+#include? "Signing.local.xcconfig"

@@ -11,13 +11,20 @@ final class StatusBarController: NSObject {
     private let statusItem: NSStatusItem
     private let store: SpaceStore
     private let history: SpaceHistory
+    private let permissions: PermissionsMonitor
+    private let openPermissions: () -> Void
     private var popover: NSPopover?
     private var backHotKey: GlobalHotKey?
     private let aboutWindow = AboutWindowController()
 
-    init(store: SpaceStore, history: SpaceHistory) {
+    init(store: SpaceStore,
+         history: SpaceHistory,
+         permissions: PermissionsMonitor,
+         openPermissions: @escaping () -> Void) {
         self.store = store
         self.history = history
+        self.permissions = permissions
+        self.openPermissions = openPermissions
         diagLog("[Namespace] StatusBarController.init creating statusItem")
         self.statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         diagLog("[Namespace] statusItem created: \(self.statusItem), button: \(String(describing: self.statusItem.button))")
@@ -27,6 +34,11 @@ final class StatusBarController: NSObject {
         configureButton()
         rebuildMenu()
         registerBackHotKey()
+        // Rebuild the menu whenever a permission flips, so its status line stays accurate.
+        permissions.onChange = { [weak self] _ in self?.refresh() }
+        // If a switch is attempted without Accessibility, surface the Setup window (with its
+        // Grant button) instead of spamming the system prompt + an alert on every press.
+        SpaceSwitcher.onAccessibilityMissing = { [openPermissions] in openPermissions() }
         diagLog("[Namespace] StatusBarController.init DONE")
         NSWorkspace.shared.notificationCenter.addObserver(
             self,
@@ -82,6 +94,23 @@ final class StatusBarController: NSObject {
 
     private func rebuildMenu() {
         let menu = NSMenu()
+
+        // Setup banner — only present while something still needs attention (permissions
+        // or the auto-rearrange setting).
+        if permissions.summary.needsAttention {
+            let warn = NSMenuItem(title: "⚠️ Setup needed to switch Spaces", action: nil, keyEquivalent: "")
+            warn.isEnabled = false
+            menu.addItem(warn)
+            let setup = NSMenuItem(
+                title: "Finish setup…",
+                action: #selector(setUpPermissions),
+                keyEquivalent: ""
+            )
+            setup.target = self
+            menu.addItem(setup)
+            menu.addItem(.separator())
+        }
+
         let currentUUID = SpaceCatalog.currentSpaceUUID()
         let currentName = currentUUID.map { store.displayName(forUUID: $0) } ?? "(unknown)"
 
@@ -187,6 +216,17 @@ final class StatusBarController: NSObject {
             + "can ask System Events to send keystrokes."
         setupMenu.addItem(autoItem)
 
+        let rearrangeItem = NSMenuItem(
+            title: "Turn off auto-rearrange Spaces…",
+            action: #selector(turnOffAutoRearrange),
+            keyEquivalent: ""
+        )
+        rearrangeItem.target = self
+        rearrangeItem.toolTip = "Turns off \"Automatically rearrange Spaces based on most "
+            + "recent use\" and restarts the Dock. That setting reorders Spaces and makes "
+            + "switching land on the wrong one."
+        setupMenu.addItem(rearrangeItem)
+
         setupItem.submenu = setupMenu
         menu.addItem(setupItem)
 
@@ -221,6 +261,14 @@ final class StatusBarController: NSObject {
         if let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Automation") {
             NSWorkspace.shared.open(url)
         }
+    }
+
+    @objc private func setUpPermissions() {
+        openPermissions()
+    }
+
+    @objc private func turnOffAutoRearrange() {
+        PermissionsMonitor.disableSpacesRearrange()
     }
 
     @objc private func spaceChanged() {
