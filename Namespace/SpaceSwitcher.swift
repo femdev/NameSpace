@@ -13,10 +13,17 @@ enum SpaceSwitcher {
     /// walks on top of one another (the runaway behavior seen in the diagnostic logs).
     private static var isSwitching = false
 
+    /// Invoked on the main thread when a switch is attempted without Accessibility. Set by
+    /// the app to surface the Setup window (which has a Grant button) — instead of firing
+    /// the macOS prompt + a modal alert on every single press, which spams the user.
+    static var onAccessibilityMissing: (() -> Void)?
+
     static func switchTo(spaceID: UInt64) {
-        guard AccessibilityCheck.isTrusted(prompt: true) else {
-            diagLog("switchTo: aborted — Accessibility not granted. Prompted user to grant.")
-            DispatchQueue.main.async { AccessibilityCheck.showSettingsAlert() }
+        // Check without prompting — repeatedly prompting on every Back press is spammy.
+        // If it's missing, route to the Setup window rather than nagging inline.
+        guard AccessibilityCheck.isTrusted(prompt: false) else {
+            diagLog("switchTo: aborted — Accessibility not granted; routing to Setup")
+            DispatchQueue.main.async { onAccessibilityMissing?() }
             return
         }
         guard !isSwitching else {
