@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- **"Back" could get permanently stranded**: callers armed `SpaceHistory`'s fly-over
+  suppression *before* `switchTo`, but `switchTo`'s early-return paths (no Accessibility,
+  busy, already-on-target…) never disarmed it — so the pending target silently swallowed
+  the next real Space change and broke Back. Most reachable by pressing ⌃⌥← before granting
+  Accessibility. `switchTo` now reports whether it started and fires an on-finish callback,
+  and callers keep history in sync. History is also no longer seeded with an invalid `0`
+  Space id.
+
+### Changed
+- Hardening/cleanup from a security + code-quality review: removed the dead `CoreDock`
+  `dlopen` shim from the private-API file, added `permissions: contents: read` to CI,
+  restored the missing `NSWorkspace` observer removal in `deinit`, and now log (instead of
+  swallow) a failed Dock restart.
+
 ### Added
 - Notarized-release pipeline: `.github/workflows/release.yml` builds, Developer ID–signs
   (hardened runtime), notarizes, staples, and attaches a `.dmg` to a GitHub Release on

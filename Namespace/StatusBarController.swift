@@ -30,7 +30,10 @@ final class StatusBarController: NSObject {
         diagLog("[Namespace] statusItem created: \(self.statusItem), button: \(String(describing: self.statusItem.button))")
         super.init()
         // Seed history with the Space we launch on so the first move has a "back" target.
-        history.record(SpaceCatalog.currentSpaceID())
+        // Guard against a transient 0 from CGSGetActiveSpace, which isn't a real Space id
+        // and would later make "Back" try to switch to a nonexistent Space.
+        let seedSpace = SpaceCatalog.currentSpaceID()
+        if seedSpace != 0 { history.record(seedSpace) }
         configureButton()
         rebuildMenu()
         registerBackHotKey()
@@ -46,6 +49,10 @@ final class StatusBarController: NSObject {
             name: NSWorkspace.activeSpaceDidChangeNotification,
             object: nil
         )
+    }
+
+    deinit {
+        NSWorkspace.shared.notificationCenter.removeObserver(self)
     }
 
     /// Ctrl+Opt+Left toggles to the previous Space, system-wide. If the OS refuses the
@@ -295,8 +302,19 @@ final class StatusBarController: NSObject {
             return
         }
         diagLog("[Namespace] goBack: switching to previous space id=\(target)")
-        history.beginProgrammaticSwitch(to: target)
-        SpaceSwitcher.switchTo(spaceID: target)
+        performSwitch(to: target)
+    }
+
+    /// Switches to `spaceID`, keeping `SpaceHistory` in sync with what actually happened.
+    /// We arm the fly-over suppression, but disarm it if the switch never starts (a guard in
+    /// `switchTo` bailed) or once it fully settles — otherwise a stranded `pendingTarget`
+    /// would silently swallow the next real Space change and break "Back".
+    private func performSwitch(to spaceID: UInt64) {
+        history.beginProgrammaticSwitch(to: spaceID)
+        let started = SpaceSwitcher.switchTo(spaceID: spaceID) { [weak self] in
+            self?.history.abandonPendingSwitch()
+        }
+        if !started { history.abandonPendingSwitch() }
     }
 
     @objc private func renameRequested() {
@@ -327,7 +345,6 @@ final class StatusBarController: NSObject {
 
     @objc private func switchRequested(_ sender: NSMenuItem) {
         guard let id = sender.representedObject as? UInt64 else { return }
-        history.beginProgrammaticSwitch(to: id)
-        SpaceSwitcher.switchTo(spaceID: id)
+        performSwitch(to: id)
     }
 }

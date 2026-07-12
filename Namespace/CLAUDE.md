@@ -9,7 +9,7 @@ Read the root `CLAUDE.md` first for product context and the private-API caveat.
 |---|---|
 | `main.swift` | Entry point. Creates `NSApplication`, sets the `AppDelegate`, runs the loop. |
 | `AppDelegate.swift` | App lifecycle. Owns the `SpaceStore`, `StatusBarController`, `OverlayWindowController`, `MissionControlObserver` and wires them together. Also defines `diagLog`. |
-| `CGSPrivate.swift` | Private API surface. `@_silgen_name` declarations for the CGS/SkyLight symbols + `dlopen` shim for the (now-removed) CoreDock switch. **The riskiest file** — undocumented symbols. |
+| `CGSPrivate.swift` | Private API surface. `@_silgen_name` declarations for the CGS/SkyLight Space-enumeration symbols. **The riskiest file** — undocumented symbols. |
 | `SpaceCatalog.swift` | Reads Spaces from CGS: ordered Spaces for the current display, current Space id/UUID. `parseSpaces` turns the raw CGS dictionary into `[Space]`. Pure-ish; the parsing is unit-tested. |
 | `SpaceStore.swift` | Persistence. UUID→name map in `UserDefaults`. Trimming, fallback names, display-name precedence. Fully unit-tested. |
 | `SpaceSwitcher.swift` | Switching. Prefers a direct Ctrl+N jump (desktops 1–9, needs the shortcut enabled), falls back to walking with Ctrl+Arrow. Drives keystrokes via AppleScript→System Events. `digitKeyCode` + `walkDelta`/`walkKeyCode` are pure/testable. |

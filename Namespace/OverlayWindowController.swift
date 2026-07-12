@@ -48,10 +48,12 @@ final class OverlayWindowController {
             names: names,
             screenFrame: screen.frame
         ) { [history] spaceID in
-            // Announce so the intermediate Spaces a walk passes through aren't
-            // mistaken for history; then perform the switch.
+            // Arm fly-over suppression so the Spaces a walk passes through aren't recorded
+            // as history — but disarm it if the switch never starts or once it settles, so a
+            // stranded pending target can't swallow the next real Space change.
             history.beginProgrammaticSwitch(to: spaceID)
-            SpaceSwitcher.switchTo(spaceID: spaceID)
+            let started = SpaceSwitcher.switchTo(spaceID: spaceID) { history.abandonPendingSwitch() }
+            if !started { history.abandonPendingSwitch() }
         }
         let host = NSHostingView(rootView: view)
         host.frame = NSRect(origin: .zero, size: screen.frame.size)

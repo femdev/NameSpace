@@ -172,7 +172,12 @@ final class PermissionsMonitor: ObservableObject {
         let killall = Process()
         killall.executableURL = URL(fileURLWithPath: "/usr/bin/killall")
         killall.arguments = ["Dock"]
-        try? killall.run()
+        do {
+            try killall.run()
+        } catch {
+            // The pref is written but Dock won't pick it up until its next relaunch.
+            diagLog("disableSpacesRearrange: could not restart Dock: \(error)")
+        }
     }
 
     /// Opens the Desktop & Dock settings pane (Mission Control lives there) for users who
