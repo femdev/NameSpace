@@ -36,4 +36,14 @@ final class SpaceSwitcherTests: XCTestCase {
         XCTAssertEqual(SpaceSwitcher.walkKeyCode(delta: 2), 124)   // RightArrow
         XCTAssertEqual(SpaceSwitcher.walkKeyCode(delta: -2), 123)  // LeftArrow
     }
+
+    func testDirectJumpKeyCodeCoversDesktopsOneThroughNineOnly() {
+        // Index 0..8 = desktops 1..9 -> a Ctrl+N key code.
+        XCTAssertEqual(SpaceSwitcher.directJumpKeyCode(targetIdx: 0), 18)  // desktop 1
+        XCTAssertEqual(SpaceSwitcher.directJumpKeyCode(targetIdx: 8), 25)  // desktop 9
+        // Index 9+ = desktop 10+ -> no direct jump (must walk).
+        XCTAssertNil(SpaceSwitcher.directJumpKeyCode(targetIdx: 9))        // desktop 10
+        XCTAssertNil(SpaceSwitcher.directJumpKeyCode(targetIdx: 20))
+        XCTAssertNil(SpaceSwitcher.directJumpKeyCode(targetIdx: -1))
+    }
 }

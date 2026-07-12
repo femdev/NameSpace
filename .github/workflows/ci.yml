@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: [main]
 
+# CI only builds + tests; it needs no write access to the repo.
+permissions:
+  contents: read
+
 concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
