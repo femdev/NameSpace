@@ -18,31 +18,37 @@ enum SpaceSwitcher {
     /// the macOS prompt + a modal alert on every single press, which spams the user.
     static var onAccessibilityMissing: (() -> Void)?
 
-    static func switchTo(spaceID: UInt64) {
+    /// Attempts to switch to `spaceID`. Returns `true` if the switch actually STARTED (all
+    /// guards passed and keystrokes were scheduled), `false` if it bailed early. Callers use
+    /// this to arm/disarm `SpaceHistory` correctly — a switch that never starts must not leave
+    /// history armed, or it strands "Back". `onFinish` fires (once) when the switch fully
+    /// settles, so callers can defensively clear any leftover history arming.
+    @discardableResult
+    static func switchTo(spaceID: UInt64, onFinish: (() -> Void)? = nil) -> Bool {
         // Check without prompting — repeatedly prompting on every Back press is spammy.
         // If it's missing, route to the Setup window rather than nagging inline.
         guard AccessibilityCheck.isTrusted(prompt: false) else {
             diagLog("switchTo: aborted — Accessibility not granted; routing to Setup")
             DispatchQueue.main.async { onAccessibilityMissing?() }
-            return
+            return false
         }
         guard !isSwitching else {
             diagLog("switchTo: ignored — a switch is already in progress")
-            return
+            return false
         }
         let ordered = SpaceCatalog.currentDisplaySpaces()
         guard let targetIdx = ordered.firstIndex(where: { $0.id64 == spaceID }) else {
             diagLog("switchTo: target id=\(spaceID) not in ordered list")
-            return
+            return false
         }
         let currentID = SpaceCatalog.currentSpaceID()
         guard let currentIdx = ordered.firstIndex(where: { $0.id64 == currentID }) else {
             diagLog("switchTo: current id=\(currentID) not in ordered list")
-            return
+            return false
         }
         guard targetIdx != currentIdx else {
             diagLog("switchTo: already on target")
-            return
+            return false
         }
 
         // The switch is driven by synthesized Ctrl+N / Ctrl+Arrow keystrokes. When this is
@@ -54,8 +60,10 @@ enum SpaceSwitcher {
         afterModifiersClear {
             emitSwitch(targetIdx: targetIdx, currentID: currentID, spaceID: spaceID) {
                 isSwitching = false
+                onFinish?()
             }
         }
+        return true
     }
 
     private static func emitSwitch(targetIdx: Int, currentID: UInt64, spaceID: UInt64,
@@ -64,7 +72,7 @@ enum SpaceSwitcher {
         // AND requires the user to have "Switch to Desktop N" enabled in
         // System Settings → Keyboard → Keyboard Shortcuts → Mission Control.
         let oneBased = targetIdx + 1
-        if (1...9).contains(oneBased), let keyCode = digitKeyCode(oneBased) {
+        if let keyCode = directJumpKeyCode(targetIdx: targetIdx) {
             diagLog("switchTo: direct jump via Ctrl+\(oneBased) (key code \(keyCode))")
             sendAppleScriptKey(keyCode: keyCode)
             // Poll for the jump to land instead of a fixed wait: finish (and release the
@@ -163,6 +171,14 @@ enum SpaceSwitcher {
         var err: NSDictionary?
         NSAppleScript(source: source)?.executeAndReturnError(&err)
         if let err = err { diagLog("AppleScript error: \(err)") }
+    }
+
+    // The Ctrl+N key code for a direct jump to the Space at `targetIdx`, or nil if the
+    // target is desktop 10+ (Ctrl+N only covers 1–9, so those must walk). Pure; unit-tested.
+    static func directJumpKeyCode(targetIdx: Int) -> Int? {
+        let oneBased = targetIdx + 1
+        guard (1...9).contains(oneBased) else { return nil }
+        return digitKeyCode(oneBased)
     }
 
     // Signed number of steps to walk from the current index to the target
