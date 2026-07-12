@@ -32,8 +32,11 @@ jobs:
           security create-keychain -p "$KEYCHAIN_PW" "$KEYCHAIN"
           security set-keychain-settings -lut 21600 "$KEYCHAIN"
           security unlock-keychain -p "$KEYCHAIN_PW" "$KEYCHAIN"
+          # No -t: a .p12 is an identity (cert + private key). Passing `-t cert` imported
+          # only the certificate and dropped the key, so set-key-partition-list then failed
+          # with "item could not be found".
           security import "$CERT" -P "$DEVELOPER_ID_CERT_PASSWORD" \
-            -f pkcs12 -t cert -T /usr/bin/codesign "$KEYCHAIN"
+            -f pkcs12 -T /usr/bin/codesign "$KEYCHAIN"
           security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$KEYCHAIN_PW" "$KEYCHAIN"
           # Put our keychain first in the search list so codesign finds the identity.
           security list-keychain -d user -s "$KEYCHAIN" login.keychain-db
