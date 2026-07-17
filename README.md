@@ -137,15 +137,17 @@ Accessibility/Automation, which the App Sandbox forbids). The distribution path 
 **Developer ID–signed, notarized `.dmg`** that opens with no Gatekeeper warnings — see
 [`docs/distribution-prd.md`](docs/distribution-prd.md) for the full rationale.
 
-**Cutting a release** (maintainer):
+**Cutting a release** (maintainer) — the tag drives the version, so there's nothing to
+bump:
 
 ```bash
-git tag v0.1.0
-git push origin v0.1.0     # triggers .github/workflows/release.yml
+git tag v0.2.0
+git push origin v0.2.0     # triggers .github/workflows/release.yml
 ```
 
-That workflow builds Release, signs with hardened runtime, notarizes via `notarytool`,
-staples, and attaches the `.dmg` to a GitHub Release.
+That workflow builds Release at the tag's version, signs with hardened runtime, notarizes
+via `notarytool`, staples, and attaches the `.dmg` to a GitHub Release. Full step-by-step
+in [`RELEASING.md`](RELEASING.md).
 
 **Prerequisites** (one-time):
 - An **active paid Apple Developer Program** membership (required for Developer ID + notarization).

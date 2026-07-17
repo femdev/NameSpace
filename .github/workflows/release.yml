@@ -53,11 +53,17 @@ jobs:
       - name: Build Release (unsigned)
         run: |
           set -euo pipefail
+          # The tag is the single source of truth for the release version: v0.2.0 -> 0.2.0.
+          # CFBundleShortVersionString is $(MARKETING_VERSION), so the app, the Release, and
+          # the .dmg filename all match the tag with no manual version bump.
+          VERSION="${GITHUB_REF_NAME#v}"
+          echo "Building version $VERSION from tag $GITHUB_REF_NAME"
           xcodebuild build \
             -scheme Namespace \
             -configuration Release \
             -destination 'platform=macOS' \
             -derivedDataPath "$RUNNER_TEMP/build" \
+            MARKETING_VERSION="$VERSION" \
             CODE_SIGNING_ALLOWED=NO
 
       - name: Sign, notarize & package
