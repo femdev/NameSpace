@@ -24,6 +24,7 @@ Read the root `CLAUDE.md` first for product context and the private-API caveat.
 | `OverlayView.swift` | SwiftUI. Positions name labels under each Space thumbnail using the empirically-tuned Spaces-bar geometry constants. |
 | `StatusBarController.swift` | The `NSStatusItem`, its menu (rename/clear/back/switch/setup help/about/quit), the rename popover trigger, and the ⌃⌥← hotkey registration. The main UI hub. |
 | `RenamePopover.swift` | SwiftUI text field for entering a name. |
+| `UpdateChecker.swift` | The app's only network use: an on-demand "Check for Updates…" that queries GitHub's Releases API. Version comparison is pure/unit-tested; downloads nothing. |
 | `AboutView.swift` | SwiftUI content for the custom About/Help panel: app glyph, blurb, sectioned setup steps with inline "Open…" buttons, version + license footer. |
 | `AboutWindowController.swift` | Hosts `AboutView` in a small reusable titled window. |
 | `Info.plist` | `LSUIElement=YES` (no Dock icon), usage-description strings. |

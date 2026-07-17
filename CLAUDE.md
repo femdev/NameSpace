@@ -30,7 +30,9 @@ Consequences worth remembering when editing:
 - Symbols are undocumented and could break on a future macOS. Touch `CGSPrivate.swift`
   and `SpaceCatalog.swift` carefully.
 - No App Store distribution is possible. Distribution is source + self-signed build.
-- There is **no network access anywhere** in this app, by design.
+- The app's **only** network use is an on-demand "Check for Updates…" menu action that
+  queries GitHub's public Releases API (see `UpdateChecker.swift`). No background traffic,
+  no analytics, no telemetry, no automatic downloads.
 
 ## Build & run
 

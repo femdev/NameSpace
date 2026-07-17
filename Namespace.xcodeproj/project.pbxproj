@@ -27,6 +27,8 @@
 		F20000000000000000000031 /* Permissions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000031 /* Permissions.swift */; };
 		F20000000000000000000032 /* PermissionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000032 /* PermissionsView.swift */; };
 		F20000000000000000000033 /* PermissionsWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000033 /* PermissionsWindowController.swift */; };
+		F20000000000000000000034 /* UpdateChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000034 /* UpdateChecker.swift */; };
+		AA00000000000000000000D6 /* UpdateCheckerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000C6 /* UpdateCheckerTests.swift */; };
 		AA00000000000000000000D5 /* PermissionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000C5 /* PermissionsTests.swift */; };
 		AA00000000000000000000D4 /* SpaceHistoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000C4 /* SpaceHistoryTests.swift */; };
 		AA00000000000000000000D1 /* SpaceStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000C1 /* SpaceStoreTests.swift */; };
@@ -57,6 +59,8 @@
 		F10000000000000000000031 /* Permissions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Permissions.swift; sourceTree = "<group>"; };
 		F10000000000000000000032 /* PermissionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionsView.swift; sourceTree = "<group>"; };
 		F10000000000000000000033 /* PermissionsWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionsWindowController.swift; sourceTree = "<group>"; };
+		F10000000000000000000034 /* UpdateChecker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateChecker.swift; sourceTree = "<group>"; };
+		AA00000000000000000000C6 /* UpdateCheckerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateCheckerTests.swift; sourceTree = "<group>"; };
 		AA00000000000000000000C5 /* PermissionsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionsTests.swift; sourceTree = "<group>"; };
 		AA00000000000000000000C4 /* SpaceHistoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpaceHistoryTests.swift; sourceTree = "<group>"; };
 		AA00000000000000000000A2 /* NamespaceTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NamespaceTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -121,6 +125,7 @@
 				AA00000000000000000000C3 /* SpaceSwitcherTests.swift */,
 				AA00000000000000000000C4 /* SpaceHistoryTests.swift */,
 				AA00000000000000000000C5 /* PermissionsTests.swift */,
+				AA00000000000000000000C6 /* UpdateCheckerTests.swift */,
 			);
 			path = NamespaceTests;
 			sourceTree = "<group>";
@@ -147,6 +152,7 @@
 				F10000000000000000000031 /* Permissions.swift */,
 				F10000000000000000000032 /* PermissionsView.swift */,
 				F10000000000000000000033 /* PermissionsWindowController.swift */,
+				F10000000000000000000034 /* UpdateChecker.swift */,
 				F10000000000000000000015 /* Assets.xcassets */,
 				F10000000000000000000014 /* Info.plist */,
 			);
@@ -263,6 +269,7 @@
 				F20000000000000000000031 /* Permissions.swift in Sources */,
 				F20000000000000000000032 /* PermissionsView.swift in Sources */,
 				F20000000000000000000033 /* PermissionsWindowController.swift in Sources */,
+				F20000000000000000000034 /* UpdateChecker.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -275,6 +282,7 @@
 				AA00000000000000000000D3 /* SpaceSwitcherTests.swift in Sources */,
 				AA00000000000000000000D4 /* SpaceHistoryTests.swift in Sources */,
 				AA00000000000000000000D5 /* PermissionsTests.swift in Sources */,
+				AA00000000000000000000D6 /* UpdateCheckerTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
