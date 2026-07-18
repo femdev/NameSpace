@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **"Check for Updates…"** menu item: an on-demand check that queries GitHub's Releases API,
+  tells you if a newer version is out, and offers a Download button (opens the Releases page).
+  No dependency, no background traffic, no auto-install — it only runs when you click it. This
+  is the app's sole network use. (Works once the repo/releases are public.)
+
 ### Fixed
 - **"Back" could get permanently stranded**: callers armed `SpaceHistory`'s fly-over
   suppression *before* `switchTo`, but `switchTo`'s early-return paths (no Accessibility,

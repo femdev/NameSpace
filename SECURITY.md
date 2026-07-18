@@ -17,8 +17,12 @@ no bug-bounty program — this is a small hobby project — but credit will glad
 
 A few things about Namespace that are relevant to its security posture:
 
-- **No network access.** The app makes no network connections of any kind, by design. It
-  collects no data and phones nothing home. There is no analytics and no telemetry.
+- **Almost no network access.** The app's only network use is an **on-demand update
+  check**: when you choose *Check for Updates…* from the menu, it makes a single request to
+  GitHub's public Releases API to compare the latest release's version tag against the one
+  you're running. It downloads and installs nothing automatically, and there is **no
+  background traffic, no analytics, and no telemetry**. It collects no data and phones
+  nothing home.
 - **Local persistence only.** The only data stored is a Space-UUID → name dictionary in
   `UserDefaults` (`com.namespaceapp.Namespace`). Diagnostic logging is **off by default**; when
   enabled it writes to `~/Library/Logs/Namespace.log`, created with `0600` permissions

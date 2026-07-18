@@ -196,6 +196,7 @@ Namespace/
   OverlayView.swift             # SwiftUI labels positioned under thumbnails
   StatusBarController.swift     # NSStatusItem + menu + hotkey + help links
   RenamePopover.swift           # SwiftUI text input for rename
+  UpdateChecker.swift           # on-demand "Check for Updates" via the GitHub Releases API
   AboutView.swift               # SwiftUI content for the custom About/Help panel
   AboutWindowController.swift   # hosts AboutView in a titled window
   Info.plist                    # LSUIElement=YES, NSAppleEventsUsageDescription
@@ -206,6 +207,7 @@ NamespaceTests/               # XCTest unit tests for the pure-logic layer
   SpaceSwitcherTests.swift
   SpaceHistoryTests.swift
   PermissionsTests.swift
+  UpdateCheckerTests.swift
 docs/                         # PRDs and design notes
 ```
 

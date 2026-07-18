@@ -190,6 +190,14 @@ final class StatusBarController: NSObject {
         aboutItem.target = self
         menu.addItem(aboutItem)
 
+        let updatesItem = NSMenuItem(
+            title: "Check for Updates…",
+            action: #selector(checkForUpdates),
+            keyEquivalent: ""
+        )
+        updatesItem.target = self
+        menu.addItem(updatesItem)
+
         let setupItem = NSMenuItem(title: "Setup Help", action: nil, keyEquivalent: "")
         let setupMenu = NSMenu()
 
@@ -250,6 +258,38 @@ final class StatusBarController: NSObject {
 
     @objc private func showAbout() {
         aboutWindow.show()
+    }
+
+    @objc private func checkForUpdates() {
+        let current = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString")
+            as? String ?? "0"
+        UpdateChecker.checkForUpdate(currentVersion: current) { outcome in
+            NSApp.activate(ignoringOtherApps: true)
+            let alert = NSAlert()
+            switch outcome {
+            case .upToDate(let version):
+                alert.messageText = "You're up to date"
+                alert.informativeText = "Namespace \(version) is the latest version."
+                alert.addButton(withTitle: "OK")
+                alert.runModal()
+            case .updateAvailable(let latest, let url):
+                alert.messageText = "Update available"
+                alert.informativeText = "Namespace \(latest) is available — you have \(current)."
+                alert.addButton(withTitle: "Download…")
+                alert.addButton(withTitle: "Later")
+                if alert.runModal() == .alertFirstButtonReturn {
+                    NSWorkspace.shared.open(url)
+                }
+            case .failed(let message):
+                alert.messageText = "Couldn't check for updates"
+                alert.informativeText = message
+                alert.addButton(withTitle: "OK")
+                alert.addButton(withTitle: "Open Releases…")
+                if alert.runModal() == .alertSecondButtonReturn {
+                    NSWorkspace.shared.open(UpdateChecker.releasesPage)
+                }
+            }
+        }
     }
 
     @objc private func openKeyboardShortcuts() {
