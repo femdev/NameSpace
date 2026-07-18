@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-07-18
+
 ### Added
 - **"Check for Updates…"** menu item: an on-demand check that queries GitHub's Releases API,
   tells you if a newer version is out, and offers a Download button (opens the Releases page).
@@ -91,5 +93,6 @@ Initial public release.
 - Unit tests for the pure-logic layer (store, Space-dictionary parsing, key-code / walk
   math, and Space history) plus a GitHub Actions CI workflow.
 
-[Unreleased]: https://github.com/femdev/NameSpace/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/femdev/NameSpace/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/femdev/NameSpace/releases/tag/v0.2.0
 [0.1.0]: https://github.com/femdev/NameSpace/releases/tag/v0.1.0
