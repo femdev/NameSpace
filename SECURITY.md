@@ -6,8 +6,7 @@ If you find a security issue in Namespace, please report it privately rather tha
 opening a public issue:
 
 - Use GitHub's **[Report a vulnerability](../../security/advisories/new)** (Security →
-  Advisories) to open a private advisory, **or**
-- email the maintainer at **femdev@users.noreply.github.com** with details and, if possible, steps to
+  Advisories) to open a private advisory with details and, if possible, steps to
   reproduce.
 
 Please give a reasonable window to respond and fix before any public disclosure. There is
